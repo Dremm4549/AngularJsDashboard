@@ -6,9 +6,7 @@
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">              
         <script src="../node_modules/angular/angular.js"></script>
         <script src="./js/app.js"></script>
-        <script src="./js/controllers.js"></script>
-        <!-- <script src="./js/services.js"></script>
-        <script src="./js/directives.js"></script> -->     
+        <script src="./js/controllers.js"></script> 
     </head>
     
     <body ng-app="MyApp" ng-controller="MyController">
@@ -38,6 +36,8 @@
              data-shape="rectangular"
              data-theme="outline">
         </div>
+
+        <button id="signout_button" onclick="onSignOut();">Sign Out</button>
 
         <div ng-app ng-init="tab = '1'">
             <div class="tabs" ng-class="{active: tab == '1'}" ng-click="tab = '1'">
@@ -72,4 +72,34 @@
 
         <!-- <iframe class="graph-1-frame" src="http://localhost:3000/d-solo/ppvZM5JVk/test-dashboard?orgId=1&from=1676403806291&to=1676425406291&panelId=2" style="width:100%; height:800px;"></iframe> -->
     </body>
+
+    <script type="text/javascript">
+      function swapIframeSource() {
+          //get motorID
+          motorID = document.getElementById('motorIDSelector').selectedOptions[0].value;
+          //check if dashboard exists for motorID
+          iframeSource = "";
+          if(true) {
+              
+          }
+          else {
+              //create dashboard
+          }
+          document.getElementById('grafanaIframe').src = iframeSource;
+      }
+  </script>
+
+  <script>
+      function handleCredentialsResponse(response){
+          const responsePayload = decodeJwtResponse(response.credential);
+          const userName = responsePayload.name;
+          console.log("ID: "+ responsePayload.sub);
+          alert("Welcome, " + responsePayload.sub + "!");
+      }
+
+      function decodeJwtResponse(data){
+          var tokens = data.split(".");
+          return JSON.parse(atob(tokens[1]));
+      }
+  </script>
 </html>
