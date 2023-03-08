@@ -1,18 +1,21 @@
+const { response } = require('express');
 const express = require('express');
 const app = express();
 
-app.use(express.static(__dirname + '/../app'));
+var cors = require('cors');
+app.use(cors())
+const port = 6002;
+
+// app.use(express.static(__dirname + '/../app'));
 
 app.get('/test',(req,res) =>{
-    res.send('Hello');
-    console.log()
-})
+    console.log("test");
+    res.send("hello");
+});
 
 app.get('/',(req,res) =>{
-    console.log('weiner')
-})
-const port = 6001
-;
-app.listen(port, ()=>{
-    console.log("server is listening");
-})
+    console.log("test");
+    res.send("hello");
+});
+
+app.listen(port, ()=> console.log(`Listening on port ${port}`));
