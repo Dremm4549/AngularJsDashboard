@@ -8,11 +8,10 @@
         <script src="./js/app.js"></script>
         <script src="./js/controllers.js"></script>
         <!-- <script src="./js/services.js"></script>
-        <script src="./js/directives.js"></script> -->
-        
+        <script src="./js/directives.js"></script> -->     
     </head>
     
-    <body ng-app="MyApp">
+    <body ng-app="MyApp" ng-controller="MyController">
         <div id="main" ng-app>
             <nav class="{{cssclass}}">
                 <!-- Brand/logo -->
@@ -21,6 +20,7 @@
                 </a>
                 <a href="#" class="home a-with-hover" ng-click="data='home...';active=true;cssclass='home'">HOME</a>
                 <a href="#" class="clients a-with-hover" ng-click="data='clients...';active=true;cssclass='clients'">CLIENTS</a>
+                <button ng-click="sendRequest()">Send request</button>
             </nav>
         </div>
 
