@@ -10,7 +10,7 @@
     </head>
     
     <body ng-app="MyApp" ng-controller="MyController">
-      <script src="https://accounts.google.com/gsi/client" asycn defer></script>
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
         <div id="main" ng-app>
             <nav class="{{cssclass}}">
                 <!-- Brand/logo -->
@@ -22,23 +22,32 @@
                 <button ng-click="sendRequest()">Send request</button>
             </nav>
         </div>
+          <div id="g_id_onload"
+            data-client_id="648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleusercontent.com"
+            data-context="signin"
+            data-callback="handleCredentialsResponse"
+            data-ux-mode="popup"
+            data-auto-prompt="false">            
+          </div>
+     
+          <div class="g_id_signin"
+                data-type="standard"
+                data-shape="rectangular"
+                data-theme="outline">
+          </div>
+          
+          <div ng-repeat="device in devices">
+            <div class="card">             
+              <button ng-click="displayValue($index)">
+                <p>{{device.DeviceID}}</p>
+                <p>{{device.MotorModel}}</p>
+                <p>{{device.MotorLocation}}</p>
+              </button>
+            </div>
+          </div>
 
-        <div id="g_id_onload"
-             data-client_id="648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleusercontent.com"
-             data-context="signin"
-             data-callback="handleCredentialsResponse"
-             data-ux-mode="popup"
-             data-auto-prompt="false">            
-        </div>
+          <button id="signout_button" onclick="onSignOut();">Sign Out</button>
         
-        <div class="g_id_signin"
-             data-type="standard"
-             data-shape="rectangular"
-             data-theme="outline">
-        </div>
-
-        <button id="signout_button" onclick="onSignOut();">Sign Out</button>
-
         <div ng-app ng-init="tab = '1'">
             <div class="tabs" ng-class="{active: tab == '1'}" ng-click="tab = '1'">
               <a href="">Monitoring</a>
@@ -57,7 +66,7 @@
                   <select name="motors" id="motorIDSelector">
                     <option value="0">0</option>
                   </select>
-                  <iframe class="graph-1-frame" id="grafanaIframe" src="http://localhost:3000/d-solo/ppvZM5JVk/test-dashboard?orgId=1&from=1676403806291&to=1676425406291&panelId=2" class="graph-1-frame"></iframe>
+                  <iframe class="graph-1-frame" id="grafanaIframe" src="http://localhost:3000/d-solo/4KMg0C14z/test-dashboard?orgId=1&from=1678199374000&to=1678285645000&panelId=2" width="450" height="200" frameborder="0"></iframe>
                 </div>
                 <div ng-show="tab == '2'">
                   <h2>Diagnostics</h2>
@@ -91,15 +100,26 @@
 
   <script>
       function handleCredentialsResponse(response){
+        
+        sessionStorage.setItem("credentials", response.credential)
+        console.log(sessionStorage.getItem("credentials"))
           const responsePayload = decodeJwtResponse(response.credential);
           const userName = responsePayload.name;
           console.log("ID: "+ responsePayload.sub);
-          alert("Welcome, " + responsePayload.sub + "!");
       }
 
       function decodeJwtResponse(data){
           var tokens = data.split(".");
           return JSON.parse(atob(tokens[1]));
       }
+
+      function onSignOut(){
+            google.accounts.id.disableAutoSelect();
+            signout_button
+            //document.getElementById('signout_button').style.display = "none";
+            //document.getElementById('g_signin').style.display = "block";
+            sessionStorage.removeItem("credentials")
+        }
+
   </script>
 </html>

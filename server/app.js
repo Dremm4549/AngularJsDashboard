@@ -36,7 +36,7 @@ var server = app.listen(process.env.PORT || 8080, function () {
     console.log("App now running on port", port)
 })
 
-app.get("/api/status", authenticateToken, function (req, res) {
+app.get("/api/devices", authenticateToken, function (req, res) {
     //res.status(200).json({status: "UP"})
     //req.userSub holds the immutable globally unique ID of google users
     //Can use this to query the database and return html containing the devices
@@ -57,6 +57,7 @@ app.get("/api/status", authenticateToken, function (req, res) {
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
+    console.log(token)
     if(!token) return res.sendStatus(401)
 
     const tokenInfoUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
