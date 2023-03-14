@@ -94,7 +94,6 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
     
     let qr = 'SELECT dashboardUID FROM `beam_db`.`devices` WHERE DeviceID = ' + deviceId + ';';
 
-
     let dashboardUID = "";
     db.query(qr, (err, result) => {
         if(err){
@@ -102,10 +101,9 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
         }
         console.log('post sql query')
 
-        if(result.length >= 0){
-            console.log(result[0].dashboardUID)
-        }
-        if(result.length >= 0){
+        if(result.length >= 0 && result[0].dashboardUID != null){
+        //console.log(result[0].dashboardUID)
+            console.log("yeet");
         //check if dashboard exists
         let dashboardURL = "http://localhost:3000/api/dashboards/uid/" + result[0].dashboardUID;
         axios.get(dashboardURL)
@@ -118,46 +116,98 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
             let endTimestamp = "1678285645000";
             //http://localhost:3000/d-solo/4KMg0C14z/100000?orgId=1&from=1678660119000&to=1678746396000&panelId=2
             res.send(`http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=2`);
-        //function that handles dashboard not existing and creating dashboard
-          //}, //function(response) {
-            //console.log("dashboard does not exist, creating");
-            //$http.post('/api/dashboards/db', JSON.stringify(data)).then(function (response) {
-            //if (response.data)
-            //success - dashboard should be created
-            //console.log("data sent to grafana");
-            //}, function (response) {
-            //error - dashboard could not be created
-            // 400 (invalid data)
-            // 401 (authorization error)
-            // 403 (access denied)
-            // 412 (unable to create - precondition)
-            //console.log(`could not create dashboard: error code was ${response.status}`);
-            //});
           });
         }
+        //handles dashboard not existing and creating dashboard
+        else{
+             console.log("dashboard does not exist, creating");
+            
+            const fs = require('fs');
+            let newDashboard = JSON.parse(fs.readFileSync('dashboardTemplate.json', 'utf8'));
+            let dashboardCreation = JSON.parse(fs.readFileSync('dashboardCreation.json', 'utf8'));
+
+             console.log(newDashboard.panels[0].targets[0].rawSql);
+             newDashboard.panels[0].targets[0].rawSql = "SELECT X, Time_Stamp, Y, Z FROM beam_db.devicedata WHERE DeviceID = " + deviceId + " AND Time_Stamp >= NOW() - INTERVAL 1 DAY order by Time_Stamp desc;";
+             newDashboard.panels[0].title = "Device ID: " + deviceId;
+             newDashboard.title = deviceId;
+
+        //     // do not need to provide UID as it is provided in response
+
+            dashboardCreation.dashboard.title = "Device ID: " + deviceId;
+            dashboardCreation.message = "created dashboard for Device ID: " + deviceId;
+
+            var config = {
+                headers: {
+                  'Authorization': 'Bearer ' + "eyJrIjoiV0xIOU1rUUI2ZDJCNUdqVlN0elFUcDN3ODFrTE5FSkgiLCJuIjoiQWRtaW5LZXkiLCJpZCI6MX0=",
+                  'Content-Type': 'application/json'
+                }
+              }
+
+            //    console.log("debug");
+            //    console.log(dashboardCreation);
+
+               axios.post('http://localhost:3000/api/dashboards/db', dashboardCreation, config)
+              .then(function (response) {
+                console.log(response.status);
+                //dashboard was created
+                if (response.status == 200)  
+                {
+                    let qr = `UPDATE beam_db.devices SET dashboardUID = '${response.data.uid}' WHERE DeviceID = '${deviceId}'`;
+                    db.query(qr, (err, result) => {
+                        if(err){
+                            console.log(err, 'errs')
+                        }
+                
+                        if(result.length >= 0){
+                            console.log(result)
+                            res.send({result})
+                        }
+                    })
+
+                    console.log("dashboard created....");
+                }
+        //         //couldnt create dashboard
+        //         else-
+        //         {
+        //             // 400 (invalid data)
+        //             // 401 (authorization error)
+        //             // 403 (access denied)
+        //             // 412 (unable to create - precondition)
+        //             console.log(`could not create dashboard: error code was ${response.status}`);
+        //         }
+        //     });
+
+
+        //     axios.post('http://localhost:3000/api/dashboards/db', newDashboard, config)
+        //     .then(function (response) {
+        //         console.log(response.status);
+        //         //dashboard was created
+        //         if (response.status == 200)  
+        //         {
+        //             let qr = `UPDATE beam_db.devices\n
+        //             SET dashboardUID = '${response.data.uid}' WHERE DeviceID = '${deviceID}'`;
+
+        //             db.query(qr, (err, result) => {
+        //                 if(err){
+        //                     console.log(err, 'errs')
+        //                 }
+                
+        //                 if(result.length >= 0){
+        //                     console.log(result)
+        //                     res.send({result})
+        //                 }
+        //             })
+        //         }
+        //         //couldnt create dashboard
+        //         else
+        //         {
+        //             // 400 (invalid data)
+        //             // 401 (authorization error)
+        //             // 403 (access denied)
+        //             // 412 (unable to create - precondition)
+        //             console.log(`could not create dashboard: error code was ${response.status}`);
+        //         }
+        //     });
+         })}
     })
 })
-
-function updateDashboard()
-{
-    //https://grafana.com/docs/grafana/latest/developers/http_api/dashboard/#create--update-dashboard
-    //get UID from mySQL database
-
-    //frontend
-    
-    //update iframe with correct URL
-
-    //http://localhost:3000/d-solo/4KMg0C14z/test-dashboard?orgId=1&from=1678199374000&to=1678285645000&panelId=2
-    //http://localhost:3000/d-solo/${dashboardID}/${title}?orgId=1&from=${unixTimestamp}&to=${unixTimestamp}&panelId=1 //panelID might be different //need to decide what timeframe to show by default - last 24hrs?
-
-    //check if dashboard exists with that UID
-    let dashboardURL = "/api/dashboards/uid/:" + dashboardID;
-
-
- 
-
-
-    
-    
-    //if it doesn't, create it
-}
