@@ -66,7 +66,7 @@
                   <select name="motors" id="motorIDSelector">
                     <option value="0">0</option>
                   </select>
-                  <iframe class="graph-1-frame" id="grafanaIframe" src="http://localhost:3000/d-solo/4KMg0C14z/test-dashboard?orgId=1&from=1678199374000&to=1678285645000&panelId=2" width="450" height="200" frameborder="0"></iframe>
+                  <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeURL)}}" width="450" height="200" frameborder="0"></iframe>
                 </div>
                 <div ng-show="tab == '2'">
                   <h2>Diagnostics</h2>

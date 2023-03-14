@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "A product by beamsoftware for enertics as a capstone project",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "ng build --prod"
   },
   "author": "Beam software",
   "license": "ISC",
@@ -14,5 +15,8 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.0",
     "mysql2": "^3.2.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^5.0.0"
   }
 }
