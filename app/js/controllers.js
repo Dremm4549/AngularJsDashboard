@@ -26,12 +26,19 @@
             }
             const time_series = response.data.time_series
             const alerts = response.data.alertchart;
-            const performance_chart = response.data.performancesummarychart
-        
+            const performance_chart = response.data.performancesummarychart;
+            const performance_y = response.data.perfychart;
+            const performance_z = response.data.perfzchart;
 
             $scope.grafanaiframeAlertURL = alerts;
             $scope.grafanaiframeURL = time_series;
+
             $scope.grafanaiframePerformanceURL = performance_chart;
+            $scope.grafanaiframePerformanceYURL = performance_y;
+            $scope.grafanaiframePerformanceZURL = performance_z;
+
+            console.log($scope.granfaniframePerformanceYURL)
+            console.log($scope.granfaniframePerformanceZURL)
             $scope.dashboardUID = response.data.dashboardsUID;
             $scope.showTimePickers = true;
     });
@@ -110,11 +117,17 @@
               
               const time_series = response.data.time_series
               const alertchart = response.data.alertchart
+              
               const performance_chart = response.data.performancesummarychart
+              const performance_y = response.data.perfychart;
+              const performance_z = response.data.perfzchart;
 
               $scope.grafanaiframeURL = time_series;
               $scope.grafanaiframeAlertURL = alertchart;
               $scope.grafanaiframePerformanceURL = performance_chart;
+              $scope.grafanaiframePerformanceYURL = performance_y;
+              $scope.grafanaiframePerformanceZURL =  performance_z;
+
            })
            .catch(function(error){
             console.log(error)

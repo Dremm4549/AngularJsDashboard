@@ -598,7 +598,7 @@
                     {
                       "parameters": [
                         {
-                          "name": "X",
+                          "name": "Y",
                           "type": "functionParameter"
                         }
                       ],
@@ -607,7 +607,7 @@
                     {
                       "parameters": [
                         {
-                          "name": "X",
+                          "name": "Y",
                           "type": "functionParameter"
                         }
                       ],
@@ -720,7 +720,7 @@
                     {
                       "parameters": [
                         {
-                          "name": "X",
+                          "name": "Z",
                           "type": "functionParameter"
                         }
                       ],
@@ -729,7 +729,7 @@
                     {
                       "parameters": [
                         {
-                          "name": "X",
+                          "name": "Z",
                           "type": "functionParameter"
                         }
                       ],
