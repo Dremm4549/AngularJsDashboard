@@ -166,26 +166,31 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
             let newPanel = JSON.parse(fs.readFileSync('dashboardTemplate.json', 'utf8'));
             let dashboardCreation = JSON.parse(fs.readFileSync('dashboardCreationMom.json', 'utf8'));
             //console.log(dashboardCreation.dashboard.panels[0].targets[0].rawSql);
+
             dashboardCreation.dashboard.title = deviceId.toString();
             console.log(dashboardCreation.dashboard.title);
             dashboardCreation.dashboard.panels[0].title = "Device ID: " + deviceId;
-            var rawSqlString = "SELECT X, Time_Stamp, Y, Z FROM beam_db.devicedata WHERE DeviceID = " + deviceId + " order by Time_Stamp desc LIMIT 21600;";
+            var rawSqlString = "SELECT Time_Stamp,X, Y, Z FROM beam_db.devicedata WHERE DeviceID = " + deviceId + " order by Time_Stamp desc LIMIT 21600;";
             dashboardCreation.dashboard.panels[0].targets[0].rawSql = rawSqlString;
             dashboardCreation.dashboard.panels[1].targets[0].rawSql = rawSqlString;
             console.log(dashboardCreation.dashboard.panels[1].targets[0].rawSql);
 
-            dashboardCreation.dashboard.panels[2].title = `Performance Summary for Device ID: ${deviceId}`
+            //Dasboard creation for piechart 'x'
+            dashboardCreation.dashboard.panels[2].title = `X | Performance Summary for Device ID: ${deviceId}`
             const pieChartRawSql = `SELECT SUM(CASE WHEN x >= 0 AND x < 2.99 THEN 1 ELSE 0 END) AS healthy_count,SUM(CASE WHEN x >= 3 AND x < 4.79 THEN 1 ELSE 0 END) AS warning_count, SUM(CASE WHEN x >= 4.8 AND x <= 6 THEN 1 ELSE 0 END) AS critical_count FROM devicedata WHERE DeviceID='${deviceId}' AND Time_Stamp >= DATE_SUB(NOW(), INTERVAL 30 DAY);`
             dashboardCreation.dashboard.panels[2].targets[0].rawSql = pieChartRawSql;
 
-            //  newPanel.panels[0].targets[0].rawSql = "SELECT X, Time_Stamp, Y, Z FROM beam_db.devicedata WHERE DeviceID = " + deviceId + " AND Time_Stamp >= NOW() - INTERVAL 1 DAY order by Time_Stamp desc;";
-            //  newPanel.panels[0].title = "Device ID: " + deviceId;
-            //  newPanel.title = deviceId;
+            // Dashboard creation for piechart 'y' values
+            dashboardCreation.dashboard.panels[3].title = `Y | Performance Summary for Device ID: ${deviceId}`
+            const pieChartYRawSql = `SELECT SUM(CASE WHEN y >= 0 AND y < 0.45 THEN 1 ELSE 0 END) AS healthy_count,SUM(CASE WHEN y >= 0.45 AND y < 0.65 THEN 1 ELSE 0 END) AS warning_count, SUM(CASE WHEN y >= .65 THEN 1 ELSE 0 END) AS critical_count FROM devicedata WHERE DeviceID='${deviceId}' AND Time_Stamp >= DATE_SUB(NOW(), INTERVAL 30 DAY);`
+            dashboardCreation.dashboard.panels[3].targets[0].rawSql = pieChartYRawSql;
 
-        //     // do not need to provide UID as it is provided in response
+            //Dashboard creation for piechart 'z' values
+            dashboardCreation.dashboard.panels[4].title = `Z | Performance Summary for Device ID: ${deviceId}`
+            const pieChartZRawSql = `SELECT SUM(CASE WHEN z >= 0 AND z < 0.1 THEN 1 ELSE 0 END) AS healthy_count, SUM(CASE WHEN z >= .1 THEN 1 ELSE 0 END) AS critical_count FROM devicedata WHERE DeviceID='${deviceId}' AND Time_Stamp >= DATE_SUB(NOW(), INTERVAL 30 DAY);`
+            dashboardCreation.dashboard.panels[4].targets[0].rawSql = pieChartZRawSql;
 
-            // dashboardCreation.dashboard.title = "Device ID: " + deviceId;
-            // dashboardCreation.message = "created dashboard for Device ID: " + deviceId;
+             //     // do not need to provide UID as it is provided in response
 
             var config = {
                 headers: {
@@ -225,10 +230,6 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
 })
 
 app.post("/api/updatePanelDates", authenticateToken, function (req, res){
-    console.log(req.body.deviceID)
-    console.log(req.body.startTime)
-    console.log(req.body.endTime)
-
     let dashboardURL = "http://localhost:3000/api/dashboards/uid/" + req.body.dashboardUID;
     axios.get(dashboardURL)
         .then(function(response) {
@@ -253,7 +254,11 @@ app.post("/api/updatePanelDates", authenticateToken, function (req, res){
                 
                 axios.post('http://localhost:3000/api/dashboards/db', dashboardUpdateJSON, config)
                      .then(function(response) {
-                        console.log(response.status)
+                        //console.log(response.status)
+                        
+                     })
+                     .catch(function(error) {
+                        console.log('error')
                      })
                 res.send({
                             time_series: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[0].title}?orgId=1&from=${req.body.startTime}&to=${req.body.endTime}&panelId=2`,
@@ -266,6 +271,7 @@ app.post("/api/updatePanelDates", authenticateToken, function (req, res){
                 var mysqlCurrentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
                 var rawSQLString = "SELECT Time_Stamp, X, Y, Z FROM beam_db.devicedata WHERE DeviceID = " + req.body.deviceID + " AND Time_Stamp <= '"+ mysqlCurrentDateTime +"' order by Time_Stamp desc LIMIT 21600;"
                 const pieChartRawSql = `SELECT SUM(CASE WHEN x >= 0 AND x < 2.99 THEN 1 ELSE 0 END) AS healthy_count,SUM(CASE WHEN x >= 3 AND x < 4.79 THEN 1 ELSE 0 END) AS warning_count, SUM(CASE WHEN x >= 4.8 AND x <= 6 THEN 1 ELSE 0 END) AS critical_count FROM devicedata WHERE DeviceID='${req.body.deviceID}' AND Time_Stamp >= DATE_SUB(NOW(), INTERVAL 1 MONTH);`
+               
                 response.data.dashboard.panels[0].targets[0].rawSql = rawSQLString
                 response.data.dashboard.panels[1].targets[0].rawSql = rawSQLString
                 response.data.dashboard.panels[2].targets[0].rawSql = pieChartRawSql;
@@ -273,6 +279,9 @@ app.post("/api/updatePanelDates", authenticateToken, function (req, res){
                 axios.post('http://localhost:3000/api/dashboards/db', dashboardUpdateJSON, config)
                      .then(function(response) {
                         console.log(response.status)
+                     })
+                     .catch(function(error) {
+                        console.log('error')
                      })
                 var calculatedStartTime = new Date()
                 calculatedStartTime.setMonth(calculatedStartTime.getMonth() - 1)
@@ -303,6 +312,9 @@ app.post("/api/updatePanelDates", authenticateToken, function (req, res){
                      .then(function(response) {
                         console.log(response.status)
                      })
+                     .catch(function(error) {
+                        console.log('error')
+                     })
                      var calculatedStartTime = new Date(req.body.endTime)
                      calculatedStartTime.setMonth(calculatedStartTime.getMonth() - 1)       
                      
@@ -322,7 +334,6 @@ app.post("/api/updatePanelDates", authenticateToken, function (req, res){
                 calculatedRawEndTime.setMonth(calculatedRawEndTime.getMonth() + 1)  
                 
                 var mysqlFormatEndTime = new Date(calculatedRawEndTime.getTime()).toISOString().slice(0, 19).replace('T', ' ')
-                console.log('Zip zoop pudding pop', mysqlFormatEndTime);
                 const pieChartRawSql = `SELECT SUM(CASE WHEN x >= 0 AND x < 2.99 THEN 1 ELSE 0 END) AS healthy_count,SUM(CASE WHEN x >= 3 AND x < 4.79 THEN 1 ELSE 0 END) AS warning_count, SUM(CASE WHEN x >= 4.8 AND x <= 6 THEN 1 ELSE 0 END) AS critical_count FROM devicedata WHERE DeviceID='${req.body.deviceID}' AND Time_Stamp <= '${mysqlFormatEndTime}' AND Time_stamp >= '${mysqlFormatStartTime}';`
 
                 response.data.dashboard.panels[0].targets[0].rawSql = rawSQLString;
@@ -334,13 +345,13 @@ app.post("/api/updatePanelDates", authenticateToken, function (req, res){
                      .then(function(response) {
                         console.log(response.status)
                      })
+                     .catch(function(error) {
+                        console.log('error')
+                     })
                 
                      var calculatedEndTime = new Date(req.body.startTime)
-                     console.log(calculatedEndTime)
                      calculatedEndTime.setMonth(calculatedEndTime.getMonth() + 1)
-                     console.log(calculatedEndTime)
                      calculatedEndTime = new Date(calculatedEndTime).getTime()
-                     console.log(calculatedEndTime)
                 res.send({
                             time_series: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[0].title}?orgId=1&from=${req.body.startTime}&to=${calculatedEndTime}&panelId=2`,
                             alertchart: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[1].title}?orgId=1&from=${req.body.startTime}&to=${calculatedEndTime}&panelId=4`,

@@ -471,14 +471,284 @@
                 "color": {
                   "mode": "palette-classic"
                 },
-                "mappings": []
+                "mappings": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "critical_count": {
+                        "color": "dark-red",
+                        "index": 0
+                      }
+                    }
+                  }
+                ]
               },
-              "overrides": []
+              "overrides": [
+                {
+                "matcher": {
+                  "id": "byName",
+                  "options": "critical_count"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "fixed",
+                      "fixedColor": "red"
+                    }
+                  }
+                ]
+              }
+            ]
             },
             "datasource": {
               "uid": "N-SO2u14z",
               "type": "mysql"
             }
+          },
+          {
+            "id": 8,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 17
+            },
+            "type": "piechart",
+            "title": "",
+            "datasource": {
+              "uid": "N-SO2u14z",
+              "type": "mysql"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "hideFrom": {
+                    "tooltip": false,
+                    "viz": false,
+                    "legend": false
+                  }
+                },
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "mappings": [
+                  {
+                    "options": {
+                      "critical_count": {
+                        "color": "dark-red",
+                        "index": 0
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "critical_count"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "fixedColor": "red",
+                        "mode": "fixed"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "reduceOptions": {
+                "values": false,
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": ""
+              },
+              "pieType": "pie",
+              "tooltip": {
+                "mode": "single",
+                "sort": "none"
+              },
+              "legend": {
+                "showLegend": true,
+                "displayMode": "list",
+                "placement": "bottom"
+              }
+            },
+            "targets": [
+              {
+                "datasource": {
+                  "type": "mysql",
+                  "uid": "N-SO2u14z"
+                },
+                "dataset": "beam_db",
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "",
+                "refId": "A",
+                "sql": {
+                  "columns": [
+                    {
+                      "parameters": [
+                        {
+                          "name": "X",
+                          "type": "functionParameter"
+                        }
+                      ],
+                      "type": "function"
+                    },
+                    {
+                      "parameters": [
+                        {
+                          "name": "X",
+                          "type": "functionParameter"
+                        }
+                      ],
+                      "type": "function"
+                    }
+                  ],
+                  "groupBy": [
+                    {
+                      "property": {
+                        "type": "string"
+                      },
+                      "type": "groupBy"
+                    }
+                  ],
+                  "limit": 50
+                },
+                "table": "devicedata"
+              }
+            ]
+          },
+          {
+            "id": 10,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 17
+            },
+            "type": "piechart",
+            "title": "",
+            "datasource": {
+              "uid": "N-SO2u14z",
+              "type": "mysql"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "hideFrom": {
+                    "tooltip": false,
+                    "viz": false,
+                    "legend": false
+                  }
+                },
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "mappings": [
+                  {
+                    "options": {
+                      "critical_count": {
+                        "color": "dark-red",
+                        "index": 0
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "critical_count"
+                  },
+                  "properties": [
+                    {
+                      "id": "color",
+                      "value": {
+                        "fixedColor": "red",
+                        "mode": "fixed"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "reduceOptions": {
+                "values": false,
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": ""
+              },
+              "pieType": "pie",
+              "tooltip": {
+                "mode": "single",
+                "sort": "none"
+              },
+              "legend": {
+                "showLegend": true,
+                "displayMode": "list",
+                "placement": "bottom"
+              }
+            },
+            "targets": [
+              {
+                "datasource": {
+                  "type": "mysql",
+                  "uid": "N-SO2u14z"
+                },
+                "dataset": "beam_db",
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "",
+                "refId": "A",
+                "sql": {
+                  "columns": [
+                    {
+                      "parameters": [
+                        {
+                          "name": "X",
+                          "type": "functionParameter"
+                        }
+                      ],
+                      "type": "function"
+                    },
+                    {
+                      "parameters": [
+                        {
+                          "name": "X",
+                          "type": "functionParameter"
+                        }
+                      ],
+                      "type": "function"
+                    }
+                  ],
+                  "groupBy": [
+                    {
+                      "property": {
+                        "type": "string"
+                      },
+                      "type": "groupBy"
+                    }
+                  ],
+                  "limit": 50
+                },
+                "table": "devicedata"
+              }
+            ]
           }
        ],
        "refresh":false,

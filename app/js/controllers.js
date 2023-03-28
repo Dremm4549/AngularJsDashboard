@@ -100,6 +100,9 @@
 
       $http.post('http://localhost:8080/api/updatePanelDates', postBody,config)
            .then(function(response) {
+              if(response.status != 200){
+                console.log("Bad response:", response.status)
+              }
               console.log(response);
               $scope.trustSrc = function(src) {
                 return $sce.trustAsResourceUrl(src);
@@ -113,5 +116,9 @@
               $scope.grafanaiframeAlertURL = alertchart;
               $scope.grafanaiframePerformanceURL = performance_chart;
            })
+           .catch(function(error){
+            console.log(error)
+           })
+           
     }
   })

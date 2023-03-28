@@ -155,20 +155,20 @@
                     </div>
                       <div ng-show="tab == '1'">
                         <h2>Monitoring</h2>
-                        <p>Select device to view data for</p>
+                        
                         
                         
                         <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeURL)}}" width="450" height="200" frameborder="0"></iframe>
                       </div>                     
                       <div ng-show="tab == '2'">
                         <h2>Diagnostics</h2>
-                        <p>Select device to view data for</p>
+
                         <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeAlertURL)}}" width="500" height="250" frameborder="0"></iframe>
                       </div>
                       <div ng-show="tab == '3'">
                         <h2>Trending & Perdictive Maintenance</h2>
                         
-                        <p>Testing</p>
+                        
                         <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframePerformanceURL)}}" width="500" height="250" frameborder="0"></iframe>
                         
                       </div>
