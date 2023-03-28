@@ -1,0 +1,508 @@
+{
+    "dashboard":{
+       "annotations":{
+          "list":[
+             {
+                "builtIn":1,
+                "datasource":{
+                   "type":"grafana",
+                   "uid":"-- Grafana --"
+                },
+                "enable":true,
+                "hide":true,
+                "iconColor":"rgba(0, 211, 255, 1)",
+                "name":"Annotations \u0026 Alerts",
+                "target":{
+                   "limit":100,
+                   "matchAny":false,
+                   "tags":[
+                      
+                   ],
+                   "type":"dashboard"
+                },
+                "type":"dashboard"
+             }
+          ]
+       },
+       "description":"dashboard for ",
+       "editable":true,
+       "fiscalYearStartMonth":0,
+       "graphTooltip":0,
+       "id":null,
+       "links":[
+          
+       ],
+       "liveNow":false,
+       "panels":[
+           {
+             "datasource":{
+                "type":"mysql",
+                "uid":"N-SO2u14z"
+             },
+             "description":"",
+             "fieldConfig":{
+                "defaults":{
+                   "color":{
+                      "mode":"palette-classic"
+                   },
+                   "custom":{
+                      "axisCenteredZero":false,
+                      "axisColorMode":"text",
+                      "axisLabel":"",
+                      "axisPlacement":"auto",
+                      "barAlignment":0,
+                      "drawStyle":"line",
+                      "fillOpacity":0,
+                      "gradientMode":"none",
+                      "hideFrom":{
+                         "legend":false,
+                         "tooltip":false,
+                         "viz":false
+                      },
+                      "lineInterpolation":"linear",
+                      "lineWidth":1,
+                      "pointSize":5,
+                      "scaleDistribution":{
+                         "type":"linear"
+                      },
+                      "showPoints":"auto",
+                      "spanNulls":false,
+                      "stacking":{
+                         "group":"A",
+                         "mode":"none"
+                      },
+                      "thresholdsStyle":{
+                         "mode":"area"
+                      }
+                   },
+                   "mappings":[
+                      
+                   ],
+                   "thresholds":{
+                      "mode":"percentage",
+                      "steps":[
+                         {
+                            "color":"green",
+                            "value":null
+                         },
+                         {
+                          "value": 50,
+                          "color": "#EAB839"
+                         },
+                         {
+                            "color":"red",
+                            "value":80
+                         }
+                      ]
+                   }
+                },
+                "overrides":[
+                   
+                ]
+             },
+             "gridPos":{
+                "h":9,
+                "w":12,
+                "x":0,
+                "y":0
+             },
+             "id":2,
+             "options":{
+                "legend":{
+                   "calcs":[
+                      
+                   ],
+                   "displayMode":"list",
+                   "placement":"bottom",
+                   "showLegend":true
+                },
+                "tooltip":{
+                   "mode":"single",
+                   "sort":"none"
+                }
+             },
+             "targets":[
+                {
+                   "dataset":"beam_db",
+                   "datasource":{
+                      "type":"mysql",
+                      "uid":"N-SO2u14z"
+                   },
+                   "editorMode":"code",
+                   "format":"table",
+                   "hide":false,
+                   "rawQuery":true,
+                   "rawSql":"SELECT X, Time_Stamp, Y, Z FROM beam_db.devicedata WHERE DeviceID = 100001 AND Time_Stamp >= NOW() - INTERVAL 1 DAY order by Time_Stamp desc;",
+                   "refId":"B",
+                   "sql":{
+                      "columns":[
+                         {
+                            "parameters":[
+                               {
+                                  "name":"Time_Stamp",
+                                  "type":"functionParameter"
+                               }
+                            ],
+                            "type":"function"
+                         },
+                         {
+                            "parameters":[
+                               {
+                                  "name":"X",
+                                  "type":"functionParameter"
+                               }
+                            ],
+                            "type":"function"
+                         },
+                         {
+                            "parameters":[
+                               {
+                                  "name":"Y",
+                                  "type":"functionParameter"
+                               }
+                            ],
+                            "type":"function"
+                         },
+                         {
+                            "parameters":[
+                               {
+                                  "name":"Z",
+                                  "type":"functionParameter"
+                               }
+                            ],
+                            "type":"function"
+                         },
+                         {
+                            "parameters":[
+                               
+                            ],
+                            "type":"function"
+                         }
+                      ],
+                      "groupBy":[
+                         {
+                            "property":{
+                               "type":"string"
+                            },
+                            "type":"groupBy"
+                         }
+                      ],
+                      "whereJsonTree":{
+                         "children1":[
+                            {
+                               "id":"8a98aaa8-0123-4456-b89a-b186c27efef3",
+                               "properties":{
+                                  "value":[
+                                     
+                                  ],
+                                  "valueSrc":[
+                                     
+                                  ]
+                               },
+                               "type":"rule"
+                            }
+                         ],
+                         "id":"9b9a9b9a-89ab-4cde-b012-3186c27064f0",
+                         "type":"group"
+                      }
+                   },
+                   "table":"devicedata"
+                }
+             ],
+             "title":"Device Data",
+             "type":"timeseries"
+          },
+          {
+            "id": 4,
+            "gridPos": {
+              "h": 8,
+              "w": 12,
+              "x": 0,
+              "y": 0
+            },
+            "type": "table",
+            "title": "Alerts",
+            "datasource": {
+              "type": "mysql",
+              "uid": "N-SO2u14z"
+            },
+            "pluginVersion": "9.3.6",
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "align": "auto",
+                  "displayMode": "auto",
+                  "inspect": false
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    }
+                  ]
+                },
+                "color": {
+                  "mode": "thresholds"
+                }
+              },
+              "overrides": [
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "X"
+                  },
+                  "properties": [
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "percentage",
+                        "steps": [
+                          {
+                            "color": "green",
+                            "value": null
+                          },
+                          {
+                            "color": "#EAB839",
+                            "value": 50
+                          },
+                          {
+                            "color": "red",
+                            "value": 80
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "custom.displayMode",
+                      "value": "lcd-gauge"
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Y"
+                  },
+                  "properties": [
+                    {
+                      "id": "custom.displayMode",
+                      "value": "lcd-gauge"
+                    },
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "percentage",
+                        "steps": [
+                          {
+                            "color": "green",
+                            "value": null
+                          },
+                          {
+                            "color": "#EAB839",
+                            "value": 50
+                          },
+                          {
+                            "color": "red",
+                            "value": 80
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                {
+                  "matcher": {
+                    "id": "byName",
+                    "options": "Z"
+                  },
+                  "properties": [
+                    {
+                      "id": "thresholds",
+                      "value": {
+                        "mode": "percentage",
+                        "steps": [
+                          {
+                            "color": "green",
+                            "value": null
+                          },
+                          {
+                            "color": "red",
+                            "value": 0.1
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "custom.displayMode",
+                      "value": "lcd-gauge"
+                    }
+                  ]
+                }
+              ]
+            },
+            "options": {
+              "showHeader": true,
+              "footer": {
+                "show": false,
+                "reducer": [
+                  "sum"
+                ],
+                "fields": ""
+              }
+            },
+            "targets": [
+              {
+                "datasource": {
+                  "type": "mysql",
+                  "uid": "N-SO2u14z"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT Time_Stamp, X, Y, Z FROM beam_db.devicedata WHERE DeviceID = 100000 AND Time_Stamp >= NOW() - INTERVAL 1 DAY order by Time_Stamp desc;",
+                "refId": "A",
+                "sql": {
+                  "columns": [
+                    {
+                      "parameters": [],
+                      "type": "function"
+                    }
+                  ],
+                  "groupBy": [
+                    {
+                      "property": {
+                        "type": "string"
+                      },
+                      "type": "groupBy"
+                    }
+                  ],
+                  "limit": 50
+                }
+              }
+            ]
+          },
+          {
+            "id": 6,
+            "gridPos": {
+              "x": 0,
+              "y": 0,
+              "w": 12,
+              "h": 8
+            },
+            "type": "piechart",
+            "title": "Panel Title",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "mysql",
+                  "uid": "N-SO2u14z"
+                },
+                "refId": "A",
+                "format": "table",
+                "rawSql": "",
+                "editorMode": "code",
+                "sql": {
+                  "columns": [
+                    {
+                      "type": "function",
+                      "parameters": [
+                        {
+                          "type": "functionParameter",
+                          "name": "X"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "function",
+                      "parameters": [
+                        {
+                          "type": "functionParameter",
+                          "name": "X"
+                        }
+                      ]
+                    }
+                  ],
+                  "groupBy": [
+                    {
+                      "type": "groupBy",
+                      "property": {
+                        "type": "string"
+                      }
+                    }
+                  ],
+                  "limit": 50
+                },
+                "dataset": "beam_db",
+                "table": "devicedata",
+                "rawQuery": true
+              }
+            ],
+            "options": {
+              "reduceOptions": {
+                "values": false,
+                "calcs": [
+                  "lastNotNull"
+                ],
+                "fields": ""
+              },
+              "pieType": "pie",
+              "tooltip": {
+                "mode": "single",
+                "sort": "none"
+              },
+              "legend": {
+                "showLegend": true,
+                "displayMode": "list",
+                "placement": "bottom"
+              }
+            },
+            "fieldConfig": {
+              "defaults": {
+                "custom": {
+                  "hideFrom": {
+                    "tooltip": false,
+                    "viz": false,
+                    "legend": false
+                  }
+                },
+                "color": {
+                  "mode": "palette-classic"
+                },
+                "mappings": []
+              },
+              "overrides": []
+            },
+            "datasource": {
+              "uid": "N-SO2u14z",
+              "type": "mysql"
+            }
+          }
+       ],
+       "refresh":false,
+       "schemaVersion":37,
+       "style":"dark",
+       "tags":[
+          
+       ],
+       "templating":{
+          "list":[
+             
+          ]
+       },
+       "time":{
+          "from":"2023-02-14T07:43:41.616Z",
+          "to":"2023-02-14T07:43:57.148Z"
+       },
+       "timepicker":{
+          
+       },
+       "timezone":"",
+       "title":"dashboard for",
+       "uid": null,
+       "version":6,
+       "weekStart":""
+    }
+ }

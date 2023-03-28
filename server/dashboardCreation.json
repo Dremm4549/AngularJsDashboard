@@ -1,0 +1,194 @@
+{
+    "dashboard": {
+      "id": null,
+      "uid": null,
+      "title": "",
+      "tags": [ "templated" ],
+      "timezone": "browser",
+      "schemaVersion": 16,
+      "version": 0,
+      "refresh": "25s"
+    },
+    "panels":[
+        {
+           "datasource":{
+              "type":"mysql",
+              "uid":"N-SO2u14z"
+           },
+           "description":"",
+           "fieldConfig":{
+              "defaults":{
+                 "color":{
+                    "mode":"palette-classic"
+                 },
+                 "custom":{
+                    "axisCenteredZero":false,
+                    "axisColorMode":"text",
+                    "axisLabel":"",
+                    "axisPlacement":"auto",
+                    "barAlignment":0,
+                    "drawStyle":"line",
+                    "fillOpacity":0,
+                    "gradientMode":"none",
+                    "hideFrom":{
+                       "legend":false,
+                       "tooltip":false,
+                       "viz":false
+                    },
+                    "lineInterpolation":"linear",
+                    "lineWidth":1,
+                    "pointSize":5,
+                    "scaleDistribution":{
+                       "type":"linear"
+                    },
+                    "showPoints":"auto",
+                    "spanNulls":false,
+                    "stacking":{
+                       "group":"A",
+                       "mode":"none"
+                    },
+                    "thresholdsStyle":{
+                       "mode":"off"
+                    }
+                 },
+                 "mappings":[
+                    
+                 ],
+                 "thresholds":{
+                    "mode":"absolute",
+                    "steps":[
+                       {
+                          "color":"green",
+                          "value":null
+                       },
+                       {
+                          "color":"red",
+                          "value":80
+                       }
+                    ]
+                 }
+              },
+              "overrides":[
+                 
+              ]
+           },
+           "gridPos":{
+              "h":9,
+              "w":12,
+              "x":0,
+              "y":0
+           },
+           "id":2,
+           "options":{
+              "legend":{
+                 "calcs":[
+                    
+                 ],
+                 "displayMode":"list",
+                 "placement":"bottom",
+                 "showLegend":true
+              },
+              "tooltip":{
+                 "mode":"single",
+                 "sort":"none"
+              }
+           },
+           "targets":[
+              {
+                 "dataset":"beam_db",
+                 "datasource":{
+                    "type":"mysql",
+                    "uid":"N-SO2u14z"
+                 },
+                 "editorMode":"code",
+                 "format":"table",
+                 "hide":false,
+                 "rawQuery":true,
+                 "rawSql":"SELECT X, Time_Stamp, Y, Z FROM beam_db.devicedata WHERE DeviceID = 100001 AND Time_Stamp >= NOW() - INTERVAL 1 DAY order by Time_Stamp desc;",
+                 "refId":"B",
+                 "sql":{
+                    "columns":[
+                       {
+                          "parameters":[
+                             {
+                                "name":"Time_Stamp",
+                                "type":"functionParameter"
+                             }
+                          ],
+                          "type":"function"
+                       },
+                       {
+                          "parameters":[
+                             {
+                                "name":"X",
+                                "type":"functionParameter"
+                             }
+                          ],
+                          "type":"function"
+                       },
+                       {
+                          "parameters":[
+                             {
+                                "name":"Y",
+                                "type":"functionParameter"
+                             }
+                          ],
+                          "type":"function"
+                       },
+                       {
+                          "parameters":[
+                             {
+                                "name":"Z",
+                                "type":"functionParameter"
+                             }
+                          ],
+                          "type":"function"
+                       },
+                       {
+                          "parameters":[
+                             
+                          ],
+                          "type":"function"
+                       }
+                    ],
+                    "groupBy":[
+                       {
+                          "property":{
+                             "type":"string"
+                          },
+                          "type":"groupBy"
+                       }
+                    ],
+                    "whereJsonTree":{
+                       "children1":[
+                          {
+                             "id":"8a98aaa8-0123-4456-b89a-b186c27efef3",
+                             "properties":{
+                                "value":[
+                                   
+                                ],
+                                "valueSrc":[
+                                   
+                                ]
+                             },
+                             "type":"rule"
+                          }
+                       ],
+                       "id":"9b9a9b9a-89ab-4cde-b012-3186c27064f0",
+                       "type":"group"
+                    }
+                 },
+                 "table":"devicedata"
+              }
+           ],
+           "title":"Device Data",
+           "type":"timeseries"
+        }
+     ],
+    "folderId": null,
+    "folderUid": null,
+    "message": "Made changes to xyz",
+    "overwrite": false
+  }
+
+  

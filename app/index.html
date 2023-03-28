@@ -9,7 +9,7 @@
         <script src="./js/controllers.js"></script> 
     </head>
     
-    <body ng-app="MyApp" ng-controller="MyController">
+    <body id="AppBody" ng-app="MyApp" ng-controller="MyController" data-ng-init="init()">
       <script src="https://accounts.google.com/gsi/client" async defer></script>
         <div id="main" ng-app>
             <nav class="{{cssclass}}">
@@ -18,11 +18,38 @@
                     <img src="./assets/images/logo.png" class="navbar-logo" alt="logo">
                 </a>
                 <a href="#" class="home a-with-hover" ng-click="data='home...';active=true;cssclass='home'">HOME</a>
-                <a href="#" class="clients a-with-hover" ng-click="data='clients...';active=true;cssclass='clients'">CLIENTS</a>
-                <button ng-click="sendRequest()">Send request</button>
+                <a href="#" class="clients a-with-hover" ng-click="data='clients...';active=true;cssclass='clients'">EXIT</a>
+
+                
+                <button id="signout_button" onclick="onSignOut();" class="sign-out-button" ng-hide="!hideLogInButton">
+                    <image id="profileImage" ng-hide="!hideLogInButton" ng-src="{{profileImg}}" class="profile-img"/>
+
+                  Sign Out
+                </button>
+                
+                <div class="g_id_signin sign-in-button"
+                data-type="standard"
+                data-size="large"
+                data-theme="filled_black"
+                data-text="sign_in_with"
+                data-shape="rectangle"
+                data-width=300
+                data-logo_alignment="left"
+                ng-hide="hideLogInButton">
+                </div>
+
+                <div id="g_id_onload"
+                data-client_id="648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleusercontent.com"
+                data-context="signin"
+                data-callback="handleCredentialsResponse"
+                data-ux-mode="popup"
+                data-auto-prompt="false"
+                ng-hide="hideLogInButton">            
+              </div>
+
             </nav>
         </div>
-          <div id="g_id_onload"
+          <!-- <div id="g_id_onload"
             data-client_id="648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleusercontent.com"
             data-context="signin"
             data-callback="handleCredentialsResponse"
@@ -34,9 +61,9 @@
                 data-type="standard"
                 data-shape="rectangular"
                 data-theme="outline">
-          </div>
+          </div> -->
           
-          <div ng-repeat="device in devices">
+          <!-- <div ng-repeat="device in devices">
             <div class="card">             
               <button ng-click="displayValue($index)">
                 <p>{{device.DeviceID}}</p>
@@ -44,11 +71,120 @@
                 <p>{{device.MotorLocation}}</p>
               </button>
             </div>
+          </div> -->
+        
+          <div ng-hide="hideLogInButton">
+            <div class="signed-out-body">
+              <h1>An Asset Performance Management and Operations Intelligence System</h1>
+              <iframe style="border-radius: 15px;" width="900" height="513" src="https://www.youtube.com/embed/kf9Jcs_Ok3g" title="Enertics" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+              
+              <br><br>
+              <br><br>
+              <br><br>
+              <hr>
+              <h2>Contact</h2>
+              <h3>info@enertics.ca</h3>
+              <h3>(+1) 416-721-5968</h3>
+  
+              <h2>Headquarters</h2>
+              <h3>
+                # 106, 555 Industrial Drive,
+  
+                Milton Education Village
+                
+                Innovation Centre (MEVIC), 
+                
+                Milton, ON, L9T 5E1 Canada
+              </h3>
+            </div>
           </div>
 
-          <button id="signout_button" onclick="onSignOut();">Sign Out</button>
-        
-        <div ng-app ng-init="tab = '1'">
+          <div class="row" ng-hide="!hideLogInButton">
+            <div class="column left">
+              <div class="side-bar">
+                <button class="motor-button" ng-click="visible=!visible;"><img class="motor-img" src="./assets/images/motor.png"/></button>
+              </div>
+              
+              <div ng-class="{'is-visible':visible}" class="menu">
+                <h2>Motors</h2>
+
+
+                <div style="position: relative; overflow-y: scroll;">
+                  
+                  <!-- where the motor buttons are -->
+                  <div style="height: calc(100vh - 190px);" class="card-container">
+                    <div ng-repeat="device in devices" >
+                      <div class="card">             
+                        <button ng-click="displayValue($index)" class="motor-select">
+                          <b><p>{{device.DeviceID}}</p></b>
+                          <img src="./assets/images/motor.png" class="card-img" />
+                          <p>{{device.MotorModel}}</p>
+                          <p>{{device.MotorLocation}}</p>
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                  <!-- end of motor button section -->
+
+                </div>
+              </div>
+            </div>
+            <div class="column right">
+            
+
+              <div >
+                <div ng-app ng-init="tab = '1'" class="main-area">
+                  <div class="tabs" ng-class="{active: tab == '1'}" ng-click="tab = '1'">
+                    <a href="">Monitoring</a>
+                  </div>
+                  <div class="tabs" ng-class="{active: tab == '2'}" ng-click="tab = '2'">
+                    <a href="">Diagnostics</a>
+                  </div>
+                  <div class="tabs" ng-class="{active: tab == '3'}" ng-click="tab = '3'">
+                    <a href="">Trending & Predictive Maintance</a>
+                  </div>
+                
+                  <div class="selected-tab">
+                    <div ng-hide="!showTimePickers">
+                      <label for="timeseriesStartDate">Start date:</label>
+                      <input type="datetime-local" id="timeseriesStartDate" />
+                      <label for="timeseriesEndDate">End date:</label>
+                      <input type="datetime-local" id="timeseriesEndDate"/>
+                      <button ng-click="updateTimeSeriesPanelDates()">Update</button>
+                    </div>
+                      <div ng-show="tab == '1'">
+                        <h2>Monitoring</h2>
+                        <p>Select device to view data for</p>
+                        
+                        
+                        <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeURL)}}" width="450" height="200" frameborder="0"></iframe>
+                      </div>                     
+                      <div ng-show="tab == '2'">
+                        <h2>Diagnostics</h2>
+                        <p>Select device to view data for</p>
+                        <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeAlertURL)}}" width="500" height="250" frameborder="0"></iframe>
+                      </div>
+                      <div ng-show="tab == '3'">
+                        <h2>Trending & Perdictive Maintenance</h2>
+                        
+                        <p>Testing</p>
+                        <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframePerformanceURL)}}" width="500" height="250" frameborder="0"></iframe>
+                        
+                      </div>
+                    </div> 
+                </div>
+              </div>
+              
+
+            </div>
+          </div>
+
+
+
+
+
+        <!-- <div ng-app ng-init="tab = '1'">
             <div class="tabs" ng-class="{active: tab == '1'}" ng-click="tab = '1'">
               <a href="">Monitoring</a>
             </div>
@@ -77,26 +213,11 @@
                   <p>Testing</p>
                 </div>
               </div> 
-          </div>
+          </div> -->
 
-        <!-- <iframe class="graph-1-frame" src="http://localhost:3000/d-solo/ppvZM5JVk/test-dashboard?orgId=1&from=1676403806291&to=1676425406291&panelId=2" style="width:100%; height:800px;"></iframe> -->
     </body>
 
-    <script type="text/javascript">
-      function swapIframeSource() {
-          //get motorID
-          motorID = document.getElementById('motorIDSelector').selectedOptions[0].value;
-          //check if dashboard exists for motorID
-          iframeSource = "";
-          if(true) {
-              
-          }
-          else {
-              //create dashboard
-          }
-          document.getElementById('grafanaIframe').src = iframeSource;
-      }
-  </script>
+    
 
   <script>
       function handleCredentialsResponse(response){
@@ -105,7 +226,16 @@
         console.log(sessionStorage.getItem("credentials"))
           const responsePayload = decodeJwtResponse(response.credential);
           const userName = responsePayload.name;
+
+          //document.getElementById('profileImage').src = responsePayload.picture
+          var controller = angular.element(document.getElementById('AppBody')).scope()
+          controller.profileImg = responsePayload.picture
+          sessionStorage.setItem('profileImageSrc', responsePayload.picture)
+          //console.log(responsePayload.picture)
+
           console.log("ID: "+ responsePayload.sub);
+          angular.element(document.getElementById('AppBody')).scope().init()
+          //angular.element(document.getElementById('AppBody')).scope().hideLogInButton = true
       }
 
       function decodeJwtResponse(data){
@@ -119,6 +249,14 @@
             //document.getElementById('signout_button').style.display = "none";
             //document.getElementById('g_signin').style.display = "block";
             sessionStorage.removeItem("credentials")
+            sessionStorage.removeItem('profileImageSrc')
+            var controller = angular.element(document.getElementById('AppBody')).scope()
+            controller.toggleHideLogInButtonState()
+            controller.profileImg = ''
+            controller.devices = []
+            controller.reload()
+            //angular.element(document.getElementById('AppBody')).scope().devices = []
+            //angular.element(document.getElementById('AppBody')).scope().reload()
         }
 
   </script>
