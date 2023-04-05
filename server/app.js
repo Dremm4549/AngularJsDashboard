@@ -155,8 +155,8 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
             res.send({time_series: `http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=2`, 
             alertchart: `http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=4`, 
             performancesummarychart: `http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=6`,
-            performancesummarychartY: `http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=8`,
-            performancesummarychartZ: `http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=10`,                        
+            perfychart: `http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=8`,
+            perfzchart: `http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=10`,                        
             dashboardsUID: result[0].dashboardUID});
           });
         }
@@ -174,8 +174,10 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
             dashboardCreation.dashboard.panels[0].title = "Device ID: " + deviceId;
             var rawSqlString = "SELECT Time_Stamp,X, Y, Z FROM beam_db.devicedata WHERE DeviceID = " + deviceId + " order by Time_Stamp desc LIMIT 21600;";
             dashboardCreation.dashboard.panels[0].targets[0].rawSql = rawSqlString;
-            dashboardCreation.dashboard.panels[1].targets[0].rawSql = rawSqlString;
-            console.log(dashboardCreation.dashboard.panels[1].targets[0].rawSql);
+
+            dashboardCreation.dashboard.panels[1].title = "Alerts for Device ID: " + deviceId;
+            var alertQuery = `SELECT Time_Stamp, X, Y, Z FROM (SELECT Time_Stamp, X, Y, Z FROM beam_db.devicedata WHERE DeviceID = ${deviceId} AND (X >= 3 OR Y >= 0.45 OR Z > 0.1) ORDER BY Time_Stamp DESC) t ORDER BY Time_Stamp desc LIMIT 21600;`
+            dashboardCreation.dashboard.panels[1].targets[0].rawSql = alertQuery;
 
             //Dasboard creation for piechart 'x'
             dashboardCreation.dashboard.panels[2].title = `X | Performance Summary for Device ID: ${deviceId}`

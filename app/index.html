@@ -49,29 +49,7 @@
 
             </nav>
         </div>
-          <!-- <div id="g_id_onload"
-            data-client_id="648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleusercontent.com"
-            data-context="signin"
-            data-callback="handleCredentialsResponse"
-            data-ux-mode="popup"
-            data-auto-prompt="false">            
-          </div>
-     
-          <div class="g_id_signin"
-                data-type="standard"
-                data-shape="rectangular"
-                data-theme="outline">
-          </div> -->
-          
-          <!-- <div ng-repeat="device in devices">
-            <div class="card">             
-              <button ng-click="displayValue($index)">
-                <p>{{device.DeviceID}}</p>
-                <p>{{device.MotorModel}}</p>
-                <p>{{device.MotorLocation}}</p>
-              </button>
-            </div>
-          </div> -->
+
         
           <div ng-hide="hideLogInButton">
             <div class="signed-out-body">
@@ -99,10 +77,10 @@
             </div>
           </div>
 
-          <div class="row" ng-hide="!hideLogInButton">
+          <div class="row" ng-hide="!hideLogInButton" >
             <div class="column left">
               <div class="side-bar">
-                <button class="motor-button" ng-click="visible=!visible;"><img class="motor-img" src="./assets/images/motor.png"/></button>
+                <button class="motor-button" ng-click="visible=!visible; "><img class="motor-img" src="./assets/images/motor.png"/></button>
               </div>
               
               <div ng-class="{'is-visible':visible}" class="menu">
@@ -130,8 +108,8 @@
                 </div>
               </div>
             </div>
-            <div class="column right">
-            
+            <div class="column right" ng-class="Changecss">
+            {{Changecss}}
 
               <div >
                 <div ng-app ng-init="tab = '1'" class="main-area">
@@ -146,7 +124,7 @@
                   </div>
                 
                   <div class="selected-tab">
-                    <div ng-hide="!showTimePickers">
+                    <div ng-hide="!showTimePickers" class="time-selector">
                       <label for="timeseriesStartDate">Start date:</label>
                       <input type="datetime-local" id="timeseriesStartDate" />
                       <label for="timeseriesEndDate">End date:</label>
@@ -158,19 +136,30 @@
                         
                         
                         
-                        <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeURL)}}" width="450" height="200" frameborder="0"></iframe>
+                        <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeURL)}}" width="1000" frameborder="0"></iframe>
                       </div>                     
                       <div ng-show="tab == '2'">
                         <h2>Diagnostics</h2>
 
-                        <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeAlertURL)}}" width="500" height="250" frameborder="0"></iframe>
+                        <iframe class="graph-2-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeAlertURL)}}" frameborder="0"></iframe>
                       </div>
                       <div ng-show="tab == '3'">
                         <h2>Trending & Perdictive Maintenance</h2>
                                               
-                        <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframePerformanceURL)}}" width="500" height="250" frameborder="0"></iframe>
-                        <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframePerformanceYURL)}}" width="500" height="250" frameborder="0"></iframe>
-                        <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframePerformanceZURL)}}" width="500" height="250" frameborder="0"></iframe>
+                        <div class="pie-row">
+                          <div class="pie-column">
+                            <iframe class="graph-3-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframePerformanceURL)}}" width="500" height="250" frameborder="0"></iframe>
+
+                          </div>
+                          <div class="pie-column">
+                            <iframe class="graph-3-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframePerformanceYURL)}}" width="500" height="250" frameborder="0"></iframe>
+
+                          </div>
+                          <div class="pie-column">
+                            <iframe class="graph-3-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframePerformanceZURL)}}" width="500" height="250" frameborder="0"></iframe>
+
+                          </div>
+                        </diV>
                       </div>
                     </div> 
                 </div>

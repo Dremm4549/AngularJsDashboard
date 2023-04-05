@@ -294,7 +294,7 @@
                     {
                       "id": "thresholds",
                       "value": {
-                        "mode": "percentage",
+                        "mode": "absolute",
                         "steps": [
                           {
                             "color": "green",
@@ -302,14 +302,22 @@
                           },
                           {
                             "color": "#EAB839",
-                            "value": 50
+                            "value": 0.45
                           },
                           {
                             "color": "red",
-                            "value": 80
+                            "value": 0.65
                           }
                         ]
                       }
+                    },
+                    {
+                      "id": "min",
+                      "value": 0
+                    },
+                    {
+                      "id": "max",
+                      "value": 1
                     }
                   ]
                 },
@@ -322,11 +330,15 @@
                     {
                       "id": "thresholds",
                       "value": {
-                        "mode": "percentage",
+                        "mode": "absolute",
                         "steps": [
                           {
                             "color": "green",
                             "value": null
+                          },
+                          {
+                            "color": "#EAB839",
+                            "value": 0.05
                           },
                           {
                             "color": "red",
@@ -338,6 +350,14 @@
                     {
                       "id": "custom.displayMode",
                       "value": "lcd-gauge"
+                    },
+                    {
+                      "id": "min",
+                      "value": 0
+                    },
+                    {
+                      "id": "max",
+                      "value": 0.8
                     }
                   ]
                 }
@@ -751,7 +771,7 @@
             ]
           }
        ],
-       "refresh":false,
+       "refresh":"10s",
        "schemaVersion":37,
        "style":"dark",
        "tags":[

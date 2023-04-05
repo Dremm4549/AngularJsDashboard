@@ -1,5 +1,6 @@
-  angular.module('MyApp',[])
-  .controller('MyController',function($scope, $http, $sce){
+  var app = angular.module('MyApp',[]);
+  
+app.controller('MyController',function($scope, $http, $sce){
     $scope.reload = function(){
       location.reload()
     }
@@ -134,4 +135,26 @@
            })
            
     }
+
+
+
+
   })
+
+  // app.controller("Change",function($scope){
+
+  //   $scope.Changecss = green;
+
+  //   console.log("hello-blue");
+
+  //   $scope.changeColor = function(){
+  //     if ($scope.Changecss === green)
+  //       $scope.Changecss = "blue";
+  //     else
+  //       $scope.Changecss = green;
+  //       console.log("hello-green");
+      
+      
+  //   };
+
+  // })

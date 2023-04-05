@@ -29,9 +29,23 @@ body {
 }
 
 .graph-1-frame {
-  height: 40vh;        
-  width: calc(85vw - 90px) ;
+  height:50vh;        
+  width: calc(100vw - 80px - 25px - 25px - 95px);
   border-radius: 8px;
+}
+
+.graph-2-frame {
+  height:50vh;        
+  width: calc(100vw - 80px - 25px - 25px - 95px);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.graph-3-frame {
+  height:50vh;        
+  width: calc((100vw - 80px - 25px - 25px - 95px - 30px)/3);
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .navbar-logo{
@@ -115,7 +129,7 @@ nav{
   color: white;
 }
 
-.selected-tab div {
+.selected-tab {
   padding: 25px;
   background: linear-gradient(354deg, rgba(46,46,46,1) 0%, rgba(65,65,65,1) 48%, rgba(65,65,65,1) 100%);
   color: #ffffff;
@@ -174,10 +188,10 @@ nav{
   top: 90px;
 
   box-shadow: 4px 6px 5px 0 rgba(0,0,0,.4);
-  -webkit-transition: width 0.5s ease-in-out;
-  -moz-transition: width 0.5s ease-in-out;
-  -o-transition: width 0.5s ease-in-out;
-  transition: width 0.5s ease-in-out;
+  -webkit-transition: width 0.1s ease-in-out;
+  -moz-transition: width 0.1s ease-in-out;
+  -o-transition: width 0.1s ease-in-out;
+  transition: width 0.1s ease-in-out;
   overflow: hidden;
 }
 
@@ -186,10 +200,10 @@ nav{
   border-right: solid;
   border-width: 1px;
   border-color: #5f5f64;
-  -webkit-transition: width 0.5s ease-in-out;
-    -moz-transition: width 0.5s ease-in-out;
-    -o-transition: width 0.5s ease-in-out;
-    transition: width 0.5s ease-in-out;
+  -webkit-transition: width 0.1s ease-in-out;
+    -moz-transition: width 0.1s ease-in-out;
+    -o-transition: width 0.1s ease-in-out;
+    transition: width 0.1s ease-in-out;
 }
 
 .motor-button{
@@ -265,7 +279,8 @@ nav{
 .motor-select {
   color: #ffffff;
   min-width: 110px;
-  min-height: 150px;
+  max-width: 110px;
+  height: 230px;
   border-radius: 10px;
   border-style: solid;
   border-color: #a3a3ad;
@@ -293,4 +308,33 @@ hr {
   background-color: #a3a3ad;
   border-style: solid;
   border-width: 1px;
+}
+
+.time-selector {
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 25px;
+  border-radius: 0px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.pie-column {
+  float:left;
+  width: 32.5%;
+  padding-right: 10px;
+}
+
+.pie-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.green {
+  color: green;
+}
+
+.blue {
+  color:blue;
 }
