@@ -14,6 +14,8 @@ const AUD = '648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleuserconten
 app.use(bodyParser.json())
 app.use(cors())
 
+const ApiRoute = require('./routes/api');
+
 var distDir = __dirname + "/dist/"
 
 app.use(express.static(distDir))
@@ -405,3 +407,7 @@ app.post("/api/updatePanelDates", authenticateToken, function (req, res){
             
         })
 })
+
+module.exports = {
+    app
+};
