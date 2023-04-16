@@ -7,6 +7,15 @@ const mysql = require('mysql2')
 const { json } = require("express")
 var app = express()
 
+const ApiRoute = require('./routes/api');
+
+
+
+require('dotenv').config()
+const {authenticateToken,config} = require('../server/middleware');
+
+app.use("/api",ApiRoute);
+
 const ISS = 'https://accounts.google.com'
 const AZP = '648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleusercontent.com'
 const AUD = '648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleusercontent.com'
@@ -34,7 +43,7 @@ db.connect(err => {
 
 var server = app.listen(process.env.PORT || 8080, function () {
     var port = server.address().port
-    console.log("App now running on port", port)
+    console.log("App now running on port", process.env.PORT)
 })
 
 app.get("/api/devices", authenticateToken, function (req, res) {
@@ -72,46 +81,34 @@ app.get("/api/devices", authenticateToken, function (req, res) {
             }
         })
     })
-    
-     
-    // db.query(query, (err, result) => {
-    //     if(err){
-    //         console.log(err, 'errs')
-    //     }
-
-    //     if(result.length >= 0){
-    //         console.log(result)
-    //         res.send({result})
-    //     }
-    // })
 })
 
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    //console.log(token)
-    if(!token) return res.sendStatus(401)
+// function authenticateToken(req, res, next) {
+//     const authHeader = req.headers['authorization']
+//     const token = authHeader && authHeader.split(' ')[1]
+//     //console.log(token)
+//     if(!token) return res.sendStatus(401)
 
-    const tokenInfoUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
-    try {
-        axios.get(tokenInfoUrl)
-         .then(response => {
-            const tokenData = response.data
-            if(tokenData["iss"] == ISS &&
-                tokenData["azp"] == AZP &&
-                tokenData["aud"] == AUD &&
-                Date.now() > Number(tokenData["exp"])){
-                    req.userSUB = tokenData["sub"]
-                    next()
-                }
-            else{
-                res.sendStatus(403)
-            }
-         })    
-    } catch (error) {
-        return res.sendStatus(403)
-    }
-}
+//     const tokenInfoUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
+//     try {
+//         axios.get(tokenInfoUrl)
+//          .then(response => {
+//             const tokenData = response.data
+//             if(tokenData["iss"] == ISS &&
+//                 tokenData["azp"] == AZP &&
+//                 tokenData["aud"] == AUD &&
+//                 Date.now() > Number(tokenData["exp"])){
+//                     req.userSUB = tokenData["sub"]
+//                     next()
+//                 }
+//             else{
+//                 res.sendStatus(403)
+//             }
+//          })    
+//     } catch (error) {
+//         return res.sendStatus(403)
+//     }
+// }
 
 app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
     //res.status(200).json({status: "UP"})
@@ -133,8 +130,6 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
         console.log('post sql query')
 
         if(result.length >= 0 && result[0].dashboardUID != null){
-        //console.log(result[0].dashboardUID)
-            console.log("yeet");
         //check if dashboard exists
         let dashboardURL = "http://localhost:3000/api/dashboards/uid/" + result[0].dashboardUID;
         axios.get(dashboardURL)
@@ -143,8 +138,7 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
             // //if the title has spaces they must be converted to dashes
             console.log(response.data.dashboard.title);
             let title = response.data.dashboard.title;
-            // let startTimestamp = "1678199374000";
-            // let endTimestamp = "1678285645000";
+
             var startTimestamp = new Date();
             startTimestamp.setMonth(startTimestamp.getMonth() - 1)
             startTimestamp = startTimestamp.getTime()
@@ -194,7 +188,7 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
             const pieChartZRawSql = `SELECT SUM(CASE WHEN z >= 0 AND z < 0.1 THEN 1 ELSE 0 END) AS healthy_count, SUM(CASE WHEN z >= .1 THEN 1 ELSE 0 END) AS critical_count FROM devicedata WHERE DeviceID='${deviceId}' AND Time_Stamp >= DATE_SUB(NOW(), INTERVAL 30 DAY);`
             dashboardCreation.dashboard.panels[4].targets[0].rawSql = pieChartZRawSql;
 
-             //     // do not need to provide UID as it is provided in response
+            // do not need to provide UID as it is provided in response
 
             var config = {
                 headers: {
@@ -228,10 +222,6 @@ app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
                         perfychart: `http://localhost:3000/d-solo/${generatedDashboardUID}/${dashboardCreation.dashboard.panels[0].title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=8`,
                         perfzchart: `http://localhost:3000/d-solo/${generatedDashboardUID}/${dashboardCreation.dashboard.panels[0].title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=10`,
                         dashboardsUID: generatedDashboardUID}); 
-                        // if(result.length >= 0){
-                        //     console.log(result)
-                        //     res.send({result})
-                        // }
                     })
                 }})       
     }})
@@ -405,3 +395,5 @@ app.post("/api/updatePanelDates", authenticateToken, function (req, res){
             
         })
 })
+
+module.exports = {app,authenticateToken};
