@@ -52,4 +52,6 @@ router.get("/devices", authenticateToken, function (req, res) {
     
 })
 
+
+
 module.exports = router;
