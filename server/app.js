@@ -14,11 +14,14 @@ const AUD = '648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleuserconten
 app.use(bodyParser.json())
 app.use(cors())
 
+const { authenticateToken,config } = require('./middleware');
 const ApiRoute = require('./routes/api');
+
 
 var distDir = __dirname + "/dist/"
 
 app.use(express.static(distDir))
+app.use("/api",ApiRoute);
 
 const db = mysql.createConnection({
     host:'localhost',
@@ -36,84 +39,73 @@ db.connect(err => {
 
 var server = app.listen(process.env.PORT || 8080, function () {
     var port = server.address().port
-    console.log("App now running on port", port)
+    console.log("App now running on port", process.env.port)
 })
 
-app.get("/api/devices", authenticateToken, function (req, res) {
-    //res.status(200).json({status: "UP"})
-    //req.userSub holds the immutable globally unique ID of google users
-    //Can use this to query the database and return html containing the devices
-    //the user owns
-    var roleQuery = "SELECT usersRole FROM beam_db.userRoles WHERE ExternalID = '"+ req.userSUB +"'"
-    var query = "";
-    var shwingg = "";
-    db.query(roleQuery, (err, result) => {
-        if (err) {
-            console.log(err, 'errs')
-        }
+// app.get("/api/devices", authenticateToken, function (req, res) {
+//     //res.status(200).json({status: "UP"})
+//     //req.userSub holds the immutable globally unique ID of google users
+//     //Can use this to query the database and return html containing the devices
+//     //the user owns
+//     var roleQuery = "SELECT usersRole FROM beam_db.userRoles WHERE ExternalID = '"+ req.userSUB +"'"
+//     var query = "";
+//     var shwingg = "";
+//     db.query(roleQuery, (err, result) => {
+//         if (err) {
+//             console.log(err, 'errs')
+//         }
 
-        if (result.length >= 0) {            
-            if (result[0].usersRole == 'admin') {
+//         if (result.length >= 0) {            
+//             if (result[0].usersRole == 'admin') {
                 
-                query = 'SELECT beam_db.devices.DeviceID, beam_db.clients.CompanyName, beam_db.clients.ClientFullName, beam_db.clients.Email, beam_db.clients.PhoneNumber, beam_db.motors.MotorModel, beam_db.motors.MotorLocation FROM beam_db.devices INNER JOIN beam_db.clients ON beam_db.devices.ClientID = beam_db.clients.ClientID INNER JOIN beam_db.motors ON beam_db.devices.MotorID = beam_db.motors.MotorID;'
-                //console.log(query);
-                shwingg = "weeeeee";
-            }   
-            else{
-                query = 'SELECT beam_db.devices.DeviceID, beam_db.clients.CompanyName, beam_db.clients.ClientFullName, beam_db.clients.Email, beam_db.clients.PhoneNumber, beam_db.motors.MotorModel, beam_db.motors.MotorLocation FROM beam_db.devices INNER JOIN beam_db.clients ON beam_db.devices.ClientID = beam_db.clients.ClientID INNER JOIN beam_db.motors ON beam_db.devices.MotorID = beam_db.motors.MotorID WHERE clients.ExternalID = '+ req.userSUB + ';'
-            }
-        }
-            db.query(query, (err, result) => {
-            if(err){
-                console.log(err, 'errs')
-            }
+//                 query = 'SELECT beam_db.devices.DeviceID, beam_db.clients.CompanyName, beam_db.clients.ClientFullName, beam_db.clients.Email, beam_db.clients.PhoneNumber, beam_db.motors.MotorModel, beam_db.motors.MotorLocation FROM beam_db.devices INNER JOIN beam_db.clients ON beam_db.devices.ClientID = beam_db.clients.ClientID INNER JOIN beam_db.motors ON beam_db.devices.MotorID = beam_db.motors.MotorID;'
+//                 //console.log(query);
+//                 shwingg = "weeeeee";
+//             }   
+//             else{
+//                 query = 'SELECT beam_db.devices.DeviceID, beam_db.clients.CompanyName, beam_db.clients.ClientFullName, beam_db.clients.Email, beam_db.clients.PhoneNumber, beam_db.motors.MotorModel, beam_db.motors.MotorLocation FROM beam_db.devices INNER JOIN beam_db.clients ON beam_db.devices.ClientID = beam_db.clients.ClientID INNER JOIN beam_db.motors ON beam_db.devices.MotorID = beam_db.motors.MotorID WHERE clients.ExternalID = '+ req.userSUB + ';'
+//             }
+//         }
+//             db.query(query, (err, result) => {
+//             if(err){
+//                 console.log(err, 'errs')
+//             }
 
-            if(result.length >= 0){
-                console.log(result)
-                res.send({result})
-            }
-        })
-    })
+//             if(result.length >= 0){
+//                 console.log(result)
+//                 res.send({result})
+//             }
+//         })
+// })
     
-     
-    // db.query(query, (err, result) => {
-    //     if(err){
-    //         console.log(err, 'errs')
-    //     }
+// })
 
-    //     if(result.length >= 0){
-    //         console.log(result)
-    //         res.send({result})
-    //     }
-    // })
-})
+// function authenticateToken(req, res, next) {
+//     const authHeader = req.headers['authorization']
+//     const token = authHeader && authHeader.split(' ')[1]
+//     //console.log(token)
+//     if(!token) return res.sendStatus(401)
 
-function authenticateToken(req, res, next) {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1]
-    //console.log(token)
-    if(!token) return res.sendStatus(401)
-
-    const tokenInfoUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
-    try {
-        axios.get(tokenInfoUrl)
-         .then(response => {
-            const tokenData = response.data
-            if(tokenData["iss"] == ISS &&
-                tokenData["azp"] == AZP &&
-                tokenData["aud"] == AUD &&
-                Date.now() > Number(tokenData["exp"])){
-                    req.userSUB = tokenData["sub"]
-                    next()
-                }
-            else{
-                res.sendStatus(403)
-            }
-         })    
-    } catch (error) {
-        return res.sendStatus(403)
-    }
-}
+//     const tokenInfoUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
+//     try {
+//         axios.get(tokenInfoUrl)
+//          .then(response => {
+//             const tokenData = response.data
+//             if(tokenData["iss"] == ISS &&
+//                 tokenData["azp"] == AZP &&
+//                 tokenData["aud"] == AUD &&
+//                 Date.now() > Number(tokenData["exp"])){
+//                     req.userSUB = tokenData["sub"]
+//                     next()
+//                 }
+//             else{
+//                 res.sendStatus(403)
+//             }
+//          })    
+//     } catch (error) {
+//         return res.sendStatus(403)
+//     }
+// }
 
 app.post("/api/getDashboardUID", authenticateToken, function (req, res) {
     //res.status(200).json({status: "UP"})
