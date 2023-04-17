@@ -38,11 +38,10 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                 
                 axios.post('http://localhost:3000/api/dashboards/db', dashboardUpdateJSON, config)
                      .then(function(response) {
-                        //console.log(response.status)
-                        
+                        updateDeviceStartEndTimeToDB(req.body.dashboardUID,mysqlFormatStartTime,mysqlFormatEndTime);                        
                      })
                      .catch(function(error) {
-                        console.log('error')
+                        console.log('error', error)
                      })
                 res.send({
                             time_series: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[0].title}?orgId=1&from=${req.body.startTime}&to=${req.body.endTime}&panelId=2`,
@@ -72,6 +71,7 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                 axios.post('http://localhost:3000/api/dashboards/db', dashboardUpdateJSON, config)
                      .then(function(response) {
                         console.log(response.status)
+                        updateDeviceStartEndTimeToDB(req.body.dashboardUID,null,null);   
                      })
                      .catch(function(error) {
                         console.log('error')
@@ -118,7 +118,9 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                         console.log('error')
                      })
                      var calculatedStartTime = new Date(req.body.endTime)
-                     calculatedStartTime.setMonth(calculatedStartTime.getMonth() - 1)       
+                     calculatedStartTime.setMonth(calculatedStartTime.getMonth() - 1)  
+                     
+                     updateDeviceStartEndTimeToDB(req.body.dashboardUID,mysqlFormatStartTime,mysqlFormatEndTime)
                      
                 res.send({
                             time_series: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[0].title}?orgId=1&from=${calculatedStartTime.getTime()}&to=${req.body.endTime}&panelId=2`,
@@ -163,6 +165,7 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                      var calculatedEndTime = new Date(req.body.startTime)
                      calculatedEndTime.setMonth(calculatedEndTime.getMonth() + 1)
                      calculatedEndTime = new Date(calculatedEndTime).getTime()
+                     updateDeviceStartEndTimeToDB(req.body.dashboardUID,mysqlFormatStartTime,mysqlFormatEndTime)
                 res.send({
                             time_series: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[0].title}?orgId=1&from=${req.body.startTime}&to=${calculatedEndTime}&panelId=2`,
                             alertchart: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[1].title}?orgId=1&from=${req.body.startTime}&to=${calculatedEndTime}&panelId=4`,
@@ -175,5 +178,22 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
             
         })
 })
+
+function updateDeviceStartEndTimeToDB(dashBoardUID,startTime,endTime){
+    var updateQr
+    if(startTime == null && endTime == null){
+        updateQr = `update beam_db.devices SET dashboardStartTime = null, dashboardEndTime = null where dashboardUID = '${dashBoardUID}'`
+    }
+    else{
+        updateQr = `update beam_db.devices SET dashboardStartTime = '${startTime}', dashboardEndTime = '${endTime}' where dashboardUID = '${dashBoardUID}'`
+    }
+     
+    db.query(updateQr, (err, result) => {
+        if(err){
+            console.log(err, 'errs')
+        }
+    })
+}   
+
 
 module.exports = router;

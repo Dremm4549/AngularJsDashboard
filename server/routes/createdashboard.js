@@ -22,7 +22,7 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
     var deviceId = req.body.deviceIDN.DeviceID;
     console.log(deviceId);
     
-    let qr = 'SELECT dashboardUID FROM `beam_db`.`devices` WHERE DeviceID = ' + deviceId + ';';
+    let qr = 'SELECT dashboardUID, dashboardStartTime, dashboardEndTime FROM `beam_db`.`devices` WHERE DeviceID = ' + deviceId + ';';
     
     let dashboardUID = "";
     var generatedDashboardUID = "";
@@ -44,7 +44,13 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
             var startTimestamp = new Date();
             startTimestamp.setMonth(startTimestamp.getMonth() - 1)
             startTimestamp = startTimestamp.getTime()
-            let endTimestamp = new Date().getTime();
+            var endTimestamp = new Date().getTime();
+
+            if(result[0].dashboardStartTime != null && result[0].dashboardEndTime != null){
+                startTimestamp = result[0].dashboardStartTime.getTime();
+                endTimestamp = result[0].dashboardEndTime.getTime();
+                console.log("not null times");
+            }
 
             //performancesummarychart
             //http://localhost:3000/d-solo/4KMg0C14z/100000?orgId=1&from=1678660119000&to=1678746396000&panelId=2
@@ -119,6 +125,8 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
                     })
                 }})       
     }})
+
+    
 })
 
 module.exports = router;
