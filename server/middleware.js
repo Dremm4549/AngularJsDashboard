@@ -3,7 +3,7 @@ const axios = require('axios')
 
 var config = {
     headers: {
-      'Authorization': `bearer ${process.env.grafanaApi}`,
+      'Authorization': `Bearer ${process.env.grafanaApi}`,
       'Content-Type': 'application/json'
     }
 }

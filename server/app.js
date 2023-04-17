@@ -22,17 +22,17 @@ const dashboardCreationRoute = require('./routes/createdashboard');
 var distDir = __dirname + "/dist/"
 
 app.use(express.static(distDir))
-//app.use("/api",ApiRoute);
+
 app.use("/api",timePickerRoute);
 app.use("/api",gatherDevicesRoute);
 app.use("/api",dashboardCreationRoute);
 
 const db = mysql.createConnection({
-    host:'localhost',
-    user:'root',
-    password:'MySQLBEAMroot2023',
-    database:'beam_db',
-    port:3306
+    host: process.env.DB_HOST,
+    user: process.env.DB_User,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port:process.env.DBPORT
 })
 
 db.connect(err => {

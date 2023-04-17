@@ -6,11 +6,11 @@ const mysql = require('mysql2');
 const axios = require('axios');
 
 const db = mysql.createConnection({
-    host:'localhost',
-    user:'root',
-    password:'MySQLBEAMroot2023',
-    database:'beam_db',
-    port:3306
+    host: process.env.DB_HOST,
+    user: process.env.DB_User,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port:process.env.DBPORT
 })
 
 router.post("/updatePanelDates", authenticateToken, function (req, res){
@@ -18,12 +18,6 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
     axios.get(dashboardURL)
         .then(function(response) {
             
-            var config = {
-                headers: {
-                  'Authorization': 'Bearer ' + "eyJrIjoiV0xIOU1rUUI2ZDJCNUdqVlN0elFUcDN3ODFrTE5FSkgiLCJuIjoiQWRtaW5LZXkiLCJpZCI6MX0=",
-                  'Content-Type': 'application/json'
-                }
-            }
             var dashboardUpdateJSON = null
             if(req.body.startTime != null && req.body.endTime != null){
                 var mysqlFormatStartTime = new Date(req.body.startTime).toISOString().slice(0, 19).replace('T', ' ')

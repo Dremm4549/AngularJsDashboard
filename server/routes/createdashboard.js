@@ -6,11 +6,11 @@ const mysql = require('mysql2');
 const axios = require('axios');
 
 const db = mysql.createConnection({
-    host:'localhost',
-    user:'root',
-    password:'MySQLBEAMroot2023',
-    database:'beam_db',
-    port:3306
+    host: process.env.DB_HOST,
+    user: process.env.DB_User,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port:process.env.DBPORT
 })
 
 router.post("/getDashboardUID", authenticateToken, function (req, res) {
@@ -33,8 +33,6 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
         console.log('post sql query')
 
         if(result.length >= 0 && result[0].dashboardUID != null){
-        //console.log(result[0].dashboardUID)
-            console.log("yeet");
         //check if dashboard exists
         let dashboardURL = "http://localhost:3000/api/dashboards/uid/" + result[0].dashboardUID;
         axios.get(dashboardURL)
@@ -93,14 +91,6 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
             dashboardCreation.dashboard.panels[4].targets[0].rawSql = pieChartZRawSql;
 
             // do not need to provide UID as it is provided in response
-
-            var config = {
-                headers: {
-                  'Authorization': 'Bearer ' + "eyJrIjoiV0xIOU1rUUI2ZDJCNUdqVlN0elFUcDN3ODFrTE5FSkgiLCJuIjoiQWRtaW5LZXkiLCJpZCI6MX0=",
-                  'Content-Type': 'application/json'
-                }
-            }
-
                axios.post('http://localhost:3000/api/dashboards/db', dashboardCreation, config)
               .then(function (response) {
                 console.log(response.status);
