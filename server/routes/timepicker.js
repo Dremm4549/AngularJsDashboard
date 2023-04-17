@@ -1,3 +1,12 @@
+/*
+* FILE          :timePicker.js
+* PROJECT       :    CAPSTONE
+* PROGRAMMER    :    Michael Dremo & Ethan Richards & Ashley Ingle & Briana Burton
+* FIRST VERSION :    2023-02-05
+* DESCRIPTION   :    This file contains the route for handling the updating of panels dates.
+
+*/
+
 const express = require('express');
 const router = express.Router();
 
@@ -19,7 +28,10 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
         .then(function(response) {
             
             var dashboardUpdateJSON = null
+            //When both date pickers are not null meaning they will be quering within a specified date range
+            // the dates selected must convereted into a format that mysql can read.
             if(req.body.startTime != null && req.body.endTime != null){
+                //creates the the sql time format
                 var mysqlFormatStartTime = new Date(req.body.startTime).toISOString().slice(0, 19).replace('T', ' ')
                 var mysqlFormatEndTime = new Date(req.body.endTime).toISOString().slice(0, 19).replace('T', ' ')
                 var rawSQLString = "SELECT Time_Stamp, X, Y, Z FROM beam_db.devicedata WHERE DeviceID = " + req.body.deviceID + " AND Time_Stamp >= '"+ mysqlFormatStartTime +"' AND Time_Stamp <= '"+ mysqlFormatEndTime +"' order by Time_Stamp desc;"
@@ -36,8 +48,12 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                 response.data.dashboard.panels[4].targets[0].rawSql = pieChartRawZSql;
                 dashboardUpdateJSON = response.data;
                 
+                // sends api call to grafan to update the dashboard and its existing pannels
+                // with the new time range.
                 axios.post('http://localhost:3000/api/dashboards/db', dashboardUpdateJSON, config)
                      .then(function(response) {
+                        // the panel must be updated with the new date range in order
+                        // to avoid an issue within grafana where timelines dont match up with the query
                         updateDeviceStartEndTimeToDB(req.body.dashboardUID,mysqlFormatStartTime,mysqlFormatEndTime);                        
                      })
                      .catch(function(error) {
@@ -52,9 +68,13 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                         })
                 return;
             }
+            // if both date pickers are emptied when the user looks hits the update button 
+            // we calculate only query data recorded within at least 1 months worth of recorded data points which equal to 21600.
+            // this the data point limit can be altered as pleased for larger ranges of data as needed.
             else if (req.body.startTime == null && req.body.endTime == null){
                 var mysqlCurrentDateTime = new Date().toISOString().slice(0, 19).replace('T', ' ')
                 var rawSQLString = "SELECT Time_Stamp, X, Y, Z FROM beam_db.devicedata WHERE DeviceID = " + req.body.deviceID + " AND Time_Stamp <= '"+ mysqlCurrentDateTime +"' order by Time_Stamp desc LIMIT 21600;"
+                
                 
                 const pieChartRawSql = `SELECT SUM(CASE WHEN x >= 0 AND x < 2.99 THEN 1 ELSE 0 END) AS healthy_count,SUM(CASE WHEN x >= 3 AND x < 4.79 THEN 1 ELSE 0 END) AS warning_count, SUM(CASE WHEN x >= 4.8 AND x <= 6 THEN 1 ELSE 0 END) AS critical_count FROM devicedata WHERE DeviceID='${req.body.deviceID}' AND Time_Stamp >= DATE_SUB(NOW(), INTERVAL 1 MONTH);`
                 const pieChartRawYSql = `SELECT SUM(CASE WHEN y >= 0 AND y < 0.45 THEN 1 ELSE 0 END) AS healthy_count,SUM(CASE WHEN y >= 0.45 AND y < 0.65 THEN 1 ELSE 0 END) AS warning_count, SUM(CASE WHEN y >= .65 THEN 1 ELSE 0 END) AS critical_count FROM devicedata WHERE DeviceID='${req.body.deviceID}' AND Time_Stamp >= DATE_SUB(NOW(), INTERVAL 1 MONTH);`
@@ -68,14 +88,20 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                 response.data.dashboard.panels[4].targets[0].rawSql = pieChartRawZSql;
 
                 dashboardUpdateJSON = response.data
+                
+                // sends api call to grafan to update the dashboard and its existing pannels
+                // with the new time range.
                 axios.post('http://localhost:3000/api/dashboards/db', dashboardUpdateJSON, config)
                      .then(function(response) {
-                        console.log(response.status)
+                        // the panel must be updated with the new date range in order
+                        // to avoid an issue within grafana where timelines dont match up with the query
                         updateDeviceStartEndTimeToDB(req.body.dashboardUID,null,null);   
                      })
                      .catch(function(error) {
                         console.log('error')
+                        console.log(error);
                      })
+                // calculate the most previous months timestamp in a sql format and pass it to the url.
                 var calculatedStartTime = new Date()
                 calculatedStartTime.setMonth(calculatedStartTime.getMonth() - 1)
                 res.send({
@@ -110,18 +136,22 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                 response.data.dashboard.panels[4].targets[0].rawSql = pieChartRawZSql;
 
                 dashboardUpdateJSON = response.data;
+
+                // sends api call to grafan to update the dashboard and its existing pannels
+                // with the new time range.
                 axios.post('http://localhost:3000/api/dashboards/db', dashboardUpdateJSON, config)
                      .then(function(response) {
-                        console.log(response.status)
+                        // the panel must be updated with the new date range in order
+                        // to avoid an issue within grafana where timelines dont match up with the query
+                        updateDeviceStartEndTimeToDB(req.body.dashboardUID,mysqlFormatStartTime,mysqlFormatEndTime)
                      })
                      .catch(function(error) {
                         console.log('error')
                      })
                      var calculatedStartTime = new Date(req.body.endTime)
                      calculatedStartTime.setMonth(calculatedStartTime.getMonth() - 1)  
-                     
-                     updateDeviceStartEndTimeToDB(req.body.dashboardUID,mysqlFormatStartTime,mysqlFormatEndTime)
-                     
+
+                // returns urls to user to display the charts below    
                 res.send({
                             time_series: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[0].title}?orgId=1&from=${calculatedStartTime.getTime()}&to=${req.body.endTime}&panelId=2`,
                             alertchart: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[1].title}?orgId=1&from=${calculatedStartTime.getTime()}&to=${req.body.endTime}&panelId=4`,
@@ -152,11 +182,12 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                 response.data.dashboard.panels[3].targets[0].rawSql = pieChartRawYSql;
                 response.data.dashboard.panels[4].targets[0].rawSql = pieChartRawZSql;
 
-
                 dashboardUpdateJSON = response.data;
                 axios.post('http://localhost:3000/api/dashboards/db', dashboardUpdateJSON, config)
                      .then(function(response) {
-                        console.log(response.status)
+                        // the panel must be updated with the new date range in order
+                        // to avoid an issue within grafana where timelines dont match up with the query
+                        updateDeviceStartEndTimeToDB(req.body.dashboardUID,mysqlFormatStartTime,mysqlFormatEndTime)
                      })
                      .catch(function(error) {
                         console.log('error')
@@ -165,7 +196,7 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                      var calculatedEndTime = new Date(req.body.startTime)
                      calculatedEndTime.setMonth(calculatedEndTime.getMonth() + 1)
                      calculatedEndTime = new Date(calculatedEndTime).getTime()
-                     updateDeviceStartEndTimeToDB(req.body.dashboardUID,mysqlFormatStartTime,mysqlFormatEndTime)
+                     
                 res.send({
                             time_series: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[0].title}?orgId=1&from=${req.body.startTime}&to=${calculatedEndTime}&panelId=2`,
                             alertchart: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[1].title}?orgId=1&from=${req.body.startTime}&to=${calculatedEndTime}&panelId=4`,

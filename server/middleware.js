@@ -11,7 +11,7 @@ var config = {
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization']
     const token = authHeader && authHeader.split(' ')[1]
-    //console.log(req);
+    
     if(!token) return res.sendStatus(401)
 
     const tokenInfoUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${token}`

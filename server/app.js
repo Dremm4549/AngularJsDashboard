@@ -1,21 +1,23 @@
+/*
+* FILE           :app.js
+* PROJECT        :    CAPSTONE
+* PROGRAMMER     :    Michael Dremo & Ethan Richards & Ashley Ingle & Briana Burton
+* FIRST VERSION  :    2023-02-05
+* DESCRIPTION    :    This file contains the code for the express 
+                        server to begin listening as well as the code for connecting 
+                        the express server to various routes in the project
+
+*/
+
 var express = require("express")
 var bodyParser = require("body-parser")
 const cors = require('cors')
-const jwt = require('jsonwebtoken')
-const axios = require('axios')
 const mysql = require('mysql2')
-const { json } = require("express")
 var app = express()
-
-const ISS = 'https://accounts.google.com'
-const AZP = '648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleusercontent.com'
-const AUD = '648073497353-ev4h38c3hpk9ov6hf9vrbdb1mtk9me1d.apps.googleusercontent.com'
 
 app.use(bodyParser.json())
 app.use(cors())
 
-const { authenticateToken,config } = require('./middleware');
-const ApiRoute = require('./routes/api');
 const timePickerRoute = require('./routes/timepicker');
 const gatherDevicesRoute = require('./routes/getdevices');
 const dashboardCreationRoute = require('./routes/createdashboard');

@@ -1,3 +1,15 @@
+/*
+* FILE :    createdashboard.js
+* PROJECT : CAPSTONE
+* PROGRAMMER : Michael Dremo & Ethan Richards & Ashley Ingle & Briana Burton
+* FIRST VERSION : 2023-02-10
+* DESCRIPTION : This javascript file is responsible for loading up an existing dashboard 
+                which is then sent to the browser and inejected into the html. Another use case
+                is the dashboard does not exist within the database and it is written and dashboard is created
+                within grafana so it can be loaded without having to recreate at another time.
+
+*/
+
 const express = require('express');
 const router = express.Router();
 
@@ -19,8 +31,7 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
     //Can use this to query the database and return html containing the devices
     //the user owns
 
-    var deviceId = req.body.deviceIDN.DeviceID;
-    console.log(deviceId);
+    var deviceId = req.body.deviceIDN.DeviceID;  
     
     let qr = 'SELECT dashboardUID, dashboardStartTime, dashboardEndTime FROM `beam_db`.`devices` WHERE DeviceID = ' + deviceId + ';';
     
@@ -30,7 +41,6 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
         if(err){
             console.log(err, 'errs')
         }
-        console.log('post sql query')
 
         if(result.length >= 0 && result[0].dashboardUID != null){
         //check if dashboard exists
@@ -49,11 +59,8 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
             if(result[0].dashboardStartTime != null && result[0].dashboardEndTime != null){
                 startTimestamp = result[0].dashboardStartTime.getTime();
                 endTimestamp = result[0].dashboardEndTime.getTime();
-                console.log("not null times");
             }
 
-            //performancesummarychart
-            //http://localhost:3000/d-solo/4KMg0C14z/100000?orgId=1&from=1678660119000&to=1678746396000&panelId=2
             res.send({time_series: `http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=2`, 
             alertchart: `http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=4`, 
             performancesummarychart: `http://localhost:3000/d-solo/${result[0].dashboardUID}/${title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=6`,
@@ -64,15 +71,13 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
         }
         //handles dashboard not existing and creating dashboard
         else {
-             console.log("dashboard does not exist, creating");
+            console.log("dashboard does not exist, creating");
             
             const fs = require('fs');
             let newPanel = JSON.parse(fs.readFileSync('dashboardTemplate.json', 'utf8'));
             let dashboardCreation = JSON.parse(fs.readFileSync('dashboardCreationMom.json', 'utf8'));
-            //console.log(dashboardCreation.dashboard.panels[0].targets[0].rawSql);
 
             dashboardCreation.dashboard.title = deviceId.toString();
-            console.log(dashboardCreation.dashboard.title);
             dashboardCreation.dashboard.panels[0].title = "Device ID: " + deviceId;
             var rawSqlString = "SELECT Time_Stamp,X, Y, Z FROM beam_db.devicedata WHERE DeviceID = " + deviceId + " order by Time_Stamp desc LIMIT 21600;";
             dashboardCreation.dashboard.panels[0].targets[0].rawSql = rawSqlString;
@@ -98,8 +103,7 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
 
             // do not need to provide UID as it is provided in response
                axios.post('http://localhost:3000/api/dashboards/db', dashboardCreation, config)
-              .then(function (response) {
-                console.log(response.status);
+              .then(function (response) {               
                 //dashboard was created
                 if (response.status == 200)  
                 {
@@ -113,9 +117,7 @@ router.post("/getDashboardUID", authenticateToken, function (req, res) {
                         startTimestamp.setMonth(startTimestamp.getMonth() - 1)
                         startTimestamp = startTimestamp.getTime()
                         let endTimestamp = new Date().getTime();
-                        
-                        console.log('\n',`http://localhost:3000/d-solo/${generatedDashboardUID}/${dashboardCreation.dashboard.panels[0].title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=8`,'\n');
-
+                                             
                         res.send({time_series: `http://localhost:3000/d-solo/${generatedDashboardUID}/${dashboardCreation.dashboard.panels[0].title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=2`, 
                         alertchart: `http://localhost:3000/d-solo/${generatedDashboardUID}/${dashboardCreation.dashboard.panels[0].title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=4`, 
                         performancesummarychart: `http://localhost:3000/d-solo/${generatedDashboardUID}/${dashboardCreation.dashboard.panels[0].title}?orgId=1&from=${startTimestamp}&to=${endTimestamp}&panelId=6`,
