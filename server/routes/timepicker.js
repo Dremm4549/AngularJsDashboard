@@ -99,11 +99,12 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                      })
                      .catch(function(error) {
                         console.log('error')
-                        console.log(error);
+                        //console.log(error);
                      })
                 // calculate the most previous months timestamp in a sql format and pass it to the url.
                 var calculatedStartTime = new Date()
                 calculatedStartTime.setMonth(calculatedStartTime.getMonth() - 1)
+
                 res.send({
                             time_series: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[0].title}?orgId=1&from${calculatedStartTime.getTime()}&to=${new Date().getTime()}&panelId=2`,
                             alertchart: `http://localhost:3000/d-solo/${req.body.dashboardUID}/${response.data.dashboard.panels[1].title}?orgId=1&from=${calculatedStartTime.getTime()}&to=${new Date().getTime()}&panelId=4`,
@@ -127,7 +128,6 @@ router.post("/updatePanelDates", authenticateToken, function (req, res){
                 const pieChartRawYSql = `SELECT SUM(CASE WHEN y >= 0 AND y < 0.45 THEN 1 ELSE 0 END) AS healthy_count,SUM(CASE WHEN y >= 0.45 AND y < 0.65 THEN 1 ELSE 0 END) AS warning_count, SUM(CASE WHEN y >= .65 THEN 1 ELSE 0 END) AS critical_count FROM devicedata WHERE DeviceID='${req.body.deviceID}' AND Time_Stamp <= '${mysqlFormatEndTime}' AND Time_stamp >= '${mysqlFormatStartTime}';`
                 const pieChartRawZSql = `SELECT SUM(CASE WHEN z >= 0 AND z < 0.1 THEN 1 ELSE 0 END) AS healthy_count, SUM(CASE WHEN z >= .1 THEN 1 ELSE 0 END) AS critical_count FROM devicedata WHERE DeviceID='${req.body.deviceID}' AND Time_Stamp <= '${mysqlFormatEndTime}' AND Time_stamp >= '${mysqlFormatStartTime}';`
 
-                console.log('start time: ',mysqlFormatStartTime);
                 response.data.dashboard.panels[0].targets[0].rawSql = rawSQLString;
                 response.data.dashboard.panels[1].targets[0].rawSql = rawSQLString;
 

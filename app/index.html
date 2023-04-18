@@ -126,16 +126,14 @@
                   <div class="selected-tab">
                     <div ng-hide="!showTimePickers" class="time-selector">
                       <label for="timeseriesStartDate">Start date:</label>
-                      <input type="datetime-local" id="timeseriesStartDate" />
+                      <input type="datetime-local" id="timeseriesStartDate" ng-model="startDateForDatePicker"/>
                       <label for="timeseriesEndDate">End date:</label>
-                      <input type="datetime-local" id="timeseriesEndDate"/>
-                      <button ng-click="updateTimeSeriesPanelDates()">Update</button>
+                      <input type="datetime-local" id="timeseriesEndDate" ng-model="endDateForDatePicker"/>
+                      <button ng-click="updateTimeSeriesPanelDates()" ng-disabled="!isValidDate(startDateForDatePicker) && !isValidDate(endDateForDatePicker)">Update</button>
                     </div>
                       <div ng-show="tab == '1'">
                         <h2>Monitoring</h2>
-                        
-                        
-                        
+                                                       
                         <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeURL)}}" width="1000" frameborder="0"></iframe>
                       </div>                     
                       <div ng-show="tab == '2'">
@@ -168,63 +166,20 @@
 
             </div>
           </div>
-
-
-
-
-
-        <!-- <div ng-app ng-init="tab = '1'">
-            <div class="tabs" ng-class="{active: tab == '1'}" ng-click="tab = '1'">
-              <a href="">Monitoring</a>
-            </div>
-            <div class="tabs" ng-class="{active: tab == '2'}" ng-click="tab = '2'">
-              <a href="">Diagnostics</a>
-            </div>
-            <div class="tabs" ng-class="{active: tab == '3'}" ng-click="tab = '3'">
-              <a href="">Trending & Perdictive Maintance</a>
-            </div>
-          
-            <div class="selected-tab">
-                <div ng-show="tab == '1'">
-                  <h2>Monitoring</h2>
-                  <p>Select motor to view data for:</p>
-                  <select name="motors" id="motorIDSelector">
-                    <option value="0">0</option>
-                  </select>
-                  <iframe class="graph-1-frame" id="grafanaIframe" ng-src="{{trustSrc(grafanaiframeURL)}}" width="450" height="200" frameborder="0"></iframe>
-                </div>
-                <div ng-show="tab == '2'">
-                  <h2>Diagnostics</h2>
-                  <p>Testing</p>
-                </div>
-                <div ng-show="tab == '3'">
-                  <h2>Trending & Perdictive Maintenance</h2>
-                  <p>Testing</p>
-                </div>
-              </div> 
-          </div> -->
-
     </body>
-
-    
 
   <script>
       function handleCredentialsResponse(response){
         
         sessionStorage.setItem("credentials", response.credential)
-        console.log(sessionStorage.getItem("credentials"))
           const responsePayload = decodeJwtResponse(response.credential);
           const userName = responsePayload.name;
-
-          //document.getElementById('profileImage').src = responsePayload.picture
+       
           var controller = angular.element(document.getElementById('AppBody')).scope()
           controller.profileImg = responsePayload.picture
           sessionStorage.setItem('profileImageSrc', responsePayload.picture)
-          //console.log(responsePayload.picture)
-
-          console.log("ID: "+ responsePayload.sub);
+  
           angular.element(document.getElementById('AppBody')).scope().init()
-          //angular.element(document.getElementById('AppBody')).scope().hideLogInButton = true
       }
 
       function decodeJwtResponse(data){

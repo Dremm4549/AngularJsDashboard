@@ -21,7 +21,6 @@ app.controller('MyController',function($scope, $http, $sce){
 
     $http.post('http://localhost:8080/api/getDashboardUID', deviceData,config)
           .then(function(response) {
-            console.log(response);
             $scope.trustSrc = function(src) {
               return $sce.trustAsResourceUrl(src);
             }
@@ -38,8 +37,6 @@ app.controller('MyController',function($scope, $http, $sce){
             $scope.grafanaiframePerformanceYURL = performance_y;
             $scope.grafanaiframePerformanceZURL = performance_z;
 
-            console.log($scope.granfaniframePerformanceYURL)
-            console.log($scope.granfaniframePerformanceZURL)
             $scope.dashboardUID = response.data.dashboardsUID;
             $scope.showTimePickers = true;
     });
@@ -49,7 +46,7 @@ app.controller('MyController',function($scope, $http, $sce){
     $scope.init = function() {
       $scope.hideLogInButton = sessionStorage.getItem("credentials") == null ? false : true
       $scope.profileImg = sessionStorage.getItem("profileImageSrc")
-      console.log(sessionStorage.getItem("profileImageSrc"))
+
       if(sessionStorage.getItem("credentials") != null ){
         var config = {
           headers: {
@@ -58,7 +55,6 @@ app.controller('MyController',function($scope, $http, $sce){
         }
         $http.get('http://localhost:8080/api/devices', config).then(function(response) {
           $scope.devices = response.data.result;
-          console.log(response.data.result);
         });
       }
       
@@ -111,13 +107,15 @@ app.controller('MyController',function($scope, $http, $sce){
               if(response.status != 200){
                 console.log("Bad response:", response.status)
               }
-              console.log(response);
+
               $scope.trustSrc = function(src) {
                 return $sce.trustAsResourceUrl(src);
               }
               
-              const time_series = response.data.time_series
-              const alertchart = response.data.alertchart
+              const time_series = response.data.time_series;
+              const alertchart = response.data.alertchart;
+
+
               
               const performance_chart = response.data.performancesummarychart
               const performance_y = response.data.perfychart;
@@ -136,25 +134,10 @@ app.controller('MyController',function($scope, $http, $sce){
            
     }
 
-
+    $scope.isValidDate = function(date) {
+      return date && new Date(date) != "Invalid Date" ? true : false
+    }
 
 
   })
 
-  // app.controller("Change",function($scope){
-
-  //   $scope.Changecss = green;
-
-  //   console.log("hello-blue");
-
-  //   $scope.changeColor = function(){
-  //     if ($scope.Changecss === green)
-  //       $scope.Changecss = "blue";
-  //     else
-  //       $scope.Changecss = green;
-  //       console.log("hello-green");
-      
-      
-  //   };
-
-  // })
